@@ -53,8 +53,7 @@ def get_parameter(modelId):
     return {
         "max_new_tokens": 1024, 
         "top_p": 0.9, 
-        "temperature": 0.1,
-        "stop": "<|eot_id|>"
+        "temperature": 0.1
     }
 parameters = get_parameter(modelId)
 
