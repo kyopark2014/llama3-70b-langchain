@@ -20,6 +20,7 @@ from langchain_community.chat_models import BedrockChat
 from langchain_core.prompts import MessagesPlaceholder, ChatPromptTemplate
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.memory import ConversationBufferWindowMemory
+from langchain_aws import ChatBedrock
 
 s3 = boto3.client('s3')
 s3_bucket = os.environ.get('s3_bucket') # bucket name
@@ -57,6 +58,7 @@ def get_parameter(modelId):
     }
 parameters = get_parameter(modelId)
 
+"""
 chat = BedrockChat(
     model_id=modelId,
     client=boto3_bedrock, 
@@ -64,6 +66,11 @@ chat = BedrockChat(
     callbacks=[StreamingStdOutCallbackHandler()],
     model_kwargs=parameters,
 )  
+"""
+chat = ChatBedrock(
+    model_id=modelId,
+    model_kwargs={"temperature": 0.1},
+)
 
 map_chain = dict() 
 MSG_LENGTH = 100
