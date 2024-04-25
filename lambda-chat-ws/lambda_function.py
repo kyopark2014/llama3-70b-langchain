@@ -51,7 +51,7 @@ HUMAN_PROMPT = "\n\nHuman:"
 AI_PROMPT = "\n\nAssistant:"
 def get_parameter(modelId):
     return {
-        "max_tokens": 1024, 
+        "max_tokens": 1024,  
         "top_p": 0.9, 
         "temperature": 0.1
     }
