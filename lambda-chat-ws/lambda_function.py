@@ -227,11 +227,11 @@ def general_conversation(connectionId, requestId, chat, query):
     time_for_inference = history_length = token_counter_history = 0
     
     system = (
-        "다음의 Human과 Assistant의 친근한 이전 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. Assistant의 이름은 서연입니다. Always answer without emojis in Korean."
+        "다음의 Human과 Assistant의 친근한 이전 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. Assistant의 이름은 서연입니다."
         #"Always answer without emojis in Korean."
     )
     
-    human = "{input}"
+    human = "Always answer without emojis in Korean: {input}"
     
     prompt = ChatPromptTemplate.from_messages([("system", system), MessagesPlaceholder(variable_name="history"), ("human", human)])
     print('prompt: ', prompt)
