@@ -26,7 +26,7 @@ s3_bucket = os.environ.get('s3_bucket') # bucket name
 s3_prefix = os.environ.get('s3_prefix')
 callLogTableName = os.environ.get('callLogTableName')
 bedrock_region = os.environ.get('bedrock_region', 'us-west-2')
-modelId = os.environ.get('model_id', 'amazon.titan-tg1-large')
+modelId = os.environ.get('model_id')
 print('model_id[:9]: ', modelId[:9])
 path = os.environ.get('path')
 doc_prefix = s3_prefix+'/'
@@ -50,21 +50,12 @@ boto3_bedrock = boto3.client(
 HUMAN_PROMPT = "\n\nHuman:"
 AI_PROMPT = "\n\nAssistant:"
 def get_parameter(modelId):
-    if modelId == 'amazon.titan-tg1-large' or modelId == 'amazon.titan-tg1-xlarge': 
-        return {
-            "maxTokenCount":1024,
-            "stopSequences":[],
-            "temperature":0,
-            "topP":0.9
-        }
-    elif modelId[:9] == 'anthropic':
-        return {
-            "max_tokens":1024,
-            "temperature":0.1,
-            "top_k":250,
-            "top_p": 0.9,
-            "stop_sequences": [HUMAN_PROMPT]            
-        }
+    return {
+        "max_new_tokens": 1024, 
+        "top_p": 0.9, 
+        "temperature": 0.1,
+        "stop": "<|eot_id|>"
+    }
 parameters = get_parameter(modelId)
 
 chat = BedrockChat(
