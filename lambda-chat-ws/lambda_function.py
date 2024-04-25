@@ -58,12 +58,11 @@ def get_parameter(modelId):
     }
 parameters = get_parameter(modelId)
 
-"""
 chat = BedrockChat(
     model_id=modelId,
     client=boto3_bedrock, 
-    streaming=True,
-    callbacks=[StreamingStdOutCallbackHandler()],
+    #streaming=True,
+    #callbacks=[StreamingStdOutCallbackHandler()],
     model_kwargs=parameters,
 )  
 """
@@ -71,6 +70,7 @@ chat = ChatBedrock(
     model_id=modelId,
     model_kwargs={"temperature": 0.1},
 )
+"""
 
 map_chain = dict() 
 MSG_LENGTH = 100
