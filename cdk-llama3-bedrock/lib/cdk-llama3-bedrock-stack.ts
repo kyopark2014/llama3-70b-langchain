@@ -18,7 +18,7 @@ const debug = false;
 const stage = 'dev';
 const s3_prefix = 'docs';
 const model_id = "meta.llama2-70b-chat-v1"; 
-const projectName = `llama3-70b-langchain`; 
+const projectName = `llama3-70b-langchain`;  
 
 const bucketName = `storage-for-${projectName}-${accountId}-${region}`; 
 const bedrock_region = "us-east-1";  // "us-east-1" "us-west-2" 
