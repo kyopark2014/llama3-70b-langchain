@@ -231,7 +231,7 @@ def general_conversation(connectionId, requestId, chat, query):
         #"Always answer without emojis in Korean."
     )
     
-    human = "Always answer without emojis in Korean: {input}"
+    human = "다음의 질문을 한국어로 답변하세요: {input}"
     
     prompt = ChatPromptTemplate.from_messages([("system", system), MessagesPlaceholder(variable_name="history"), ("human", human)])
     print('prompt: ', prompt)
