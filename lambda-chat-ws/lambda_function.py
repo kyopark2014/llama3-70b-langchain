@@ -50,13 +50,13 @@ boto3_bedrock = boto3.client(
 
 HUMAN_PROMPT = "\n\nHuman:"
 AI_PROMPT = "\n\nAssistant:"
-def get_parameter(modelId):
+def get_parameter():
     return {
         "max_gen_len": 1024,  
         "top_p": 0.9, 
         "temperature": 0.1
     }
-parameters = get_parameter(modelId)
+parameters = get_parameter()
 
 chat = BedrockChat(
     model_id=modelId,
@@ -227,8 +227,8 @@ def general_conversation(connectionId, requestId, chat, query):
     time_for_inference = history_length = token_counter_history = 0
     
     system = (
-        #"다음의 Human과 Assistant의 친근한 이전 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. Assistant의 이름은 서연이고, 모르는 질문을 받으면 솔직히 모른다고 말합니다."
-        "Always answer without emojis in Korean."
+        "다음의 Human과 Assistant의 친근한 이전 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. Assistant의 이름은 서연이고, emoji를 없이 한국어로 답변합니다."
+        #"Always answer without emojis in Korean."
     )
     
     human = "{input}"
