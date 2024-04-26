@@ -248,8 +248,8 @@ def general_conversation(connectionId, requestId, chat, query):
                 "input": query,
             }
         )
-     #   msg = readStreamMsg(connectionId, requestId, stream.content)    
-                            
+        msg = readStreamMsg(connectionId, requestId, stream.content)    
+
         msg = stream.content
         print('msg: ', msg)
     except Exception:
