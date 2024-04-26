@@ -249,7 +249,9 @@ def general_conversation(connectionId, requestId, chat, query):
             }
         )
         msg = readStreamMsg(connectionId, requestId, stream.content)    
-
+        print('stream: ', stream)
+        print('history length: ', len(history))
+        
         msg = stream.content
         print('msg: ', msg)
     except Exception:
