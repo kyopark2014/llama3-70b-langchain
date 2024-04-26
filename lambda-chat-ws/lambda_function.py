@@ -48,13 +48,17 @@ boto3_bedrock = boto3.client(
     )
 )
 
-HUMAN_PROMPT = "\n\nHuman:"
-AI_PROMPT = "\n\nAssistant:"
+#HUMAN_PROMPT = "\n\nHuman:"
+#AI_PROMPT = "\n\nAssistant:"
+HUMAN_PROMPT = "<|eot_id|>"
+
 def get_parameter():
     return {
         "max_gen_len": 1024,  
         "top_p": 0.9, 
-        "temperature": 0.1
+        "temperature": 0.1,
+        #"stop": "<|eot_id|>"
+        "stop_sequences": [HUMAN_PROMPT]
     }
 parameters = get_parameter()
 
@@ -250,7 +254,6 @@ def general_conversation(connectionId, requestId, chat, query):
         )
         msg = readStreamMsg(connectionId, requestId, stream.content)    
         print('stream: ', stream)
-        print('history length: ', len(history))
         
         msg = stream.content
         print('msg: ', msg)
