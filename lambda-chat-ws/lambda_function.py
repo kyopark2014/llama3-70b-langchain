@@ -52,14 +52,14 @@ boto3_bedrock = boto3.client(
 #AI_PROMPT = "\n\nAssistant:"
 #HUMAN_PROMPT = "<|eot_id|>"
 HUMAN_PROMPT = "/SYS"
-
+# INST
 def get_parameter():
     return {
         "max_gen_len": 1024,  
         "top_p": 0.9, 
         "temperature": 0.1,
         #"stop": "<|eot_id|>"
-        "stop": [HUMAN_PROMPT]
+        #"stop": [HUMAN_PROMPT]
     }
 parameters = get_parameter()
 
