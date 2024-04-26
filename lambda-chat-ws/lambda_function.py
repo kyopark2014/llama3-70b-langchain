@@ -59,7 +59,7 @@ def get_parameter():
         "top_p": 0.9, 
         "temperature": 0.1,
         #"stop": "<|eot_id|>"
-        "stop_sequences": [HUMAN_PROMPT]
+        "stop": [HUMAN_PROMPT]
     }
 parameters = get_parameter()
 
