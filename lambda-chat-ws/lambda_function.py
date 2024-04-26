@@ -50,7 +50,8 @@ boto3_bedrock = boto3.client(
 
 #HUMAN_PROMPT = "\n\nHuman:"
 #AI_PROMPT = "\n\nAssistant:"
-HUMAN_PROMPT = "<|eot_id|>"
+#HUMAN_PROMPT = "<|eot_id|>"
+HUMAN_PROMPT = "/SYS"
 
 def get_parameter():
     return {
