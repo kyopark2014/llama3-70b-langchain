@@ -244,7 +244,7 @@ def general_conversation(connectionId, requestId, chat, query):
             input_variables=["text"],
     )
     
-    chain = prompt | chat | JsonOutputParser()
+    chain = prompt | chat
         
     #history = memory_chain.load_memory_variables({})["chat_history"]
     #print('memory_chain: ', history)
