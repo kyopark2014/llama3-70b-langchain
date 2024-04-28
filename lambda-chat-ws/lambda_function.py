@@ -247,11 +247,10 @@ def general_conversation(connectionId, requestId, chat, query):
     prompt = PromptTemplate(
         template="""
         <|begin_of_text|>
-            <|start_header_id|>system<|end_header_id|>\n\n다음의 History는 User와 Assistant의 이전 대화입니다. History를 참조하여 Qustion에 대해 친절히 답변하세요. Always answer without emojis in Korean.            
-            History: {chat_history}<|eot_id|>
-            <|start_header_id|>user<|end_header_id|>\n\n{text}<|eot_id|>
+            <|start_header_id|>system<|end_header_id|>\n\n다음의 History는 User와 Assistant의 이전 대화입니다. History를 참조하여 Qustion에 대해 친절히 답변하세요. Always answer without emojis in Korean.<|eot_id|>\n
+            <|start_header_id|>user<|end_header_id|>\n\n{text}<|eot_id|>\n 
             <|start_header_id|>assistant<|end_header_id|>\n\n""",
-            input_variables=["chat_history","text"],
+            input_variables=["text"],
     )
     
     chain = prompt | chat
@@ -266,7 +265,7 @@ def general_conversation(connectionId, requestId, chat, query):
         isTyping(connectionId, requestId)  
         stream = chain.invoke(
             {
-                "chat_history": history,
+                #"chat_history": history,
                 "text": query,
             }
         )
