@@ -17,5 +17,12 @@ It shows how to deploy a chatbot using Llama3 70B based on LangChain.
 - EOS token: <|end_of_text|>
 
 
+예는 아래와 같습니다.
 
-
+```text
+<|begin_of_text|>
+        <|start_header_id|>system<|end_header_id|>\n\nAlways answer without emojis in Korean<|eot_id|>
+        <|start_header_id|>user<|end_header_id|>\n\n"{text}"<|eot_id|>
+        <|start_header_id|>assistant<|end_header_id|>\n\n"""
+<|end_of_text|>
+```
