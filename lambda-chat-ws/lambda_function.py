@@ -220,19 +220,48 @@ def isKorean(text):
         print('Not Korean: ', word_kor)
         return False
 
+from langchain.prompts import PromptTemplate
+from langchain_experimental.chat_models import Llama2Chat
+from langchain_core.messages import SystemMessage
+from langchain_core.prompts.chat import (
+    ChatPromptTemplate,
+    SystemMessagePromptTemplate,
+    HumanMessagePromptTemplate,
+    MessagesPlaceholder,
+)
+
+
 def general_conversation(connectionId, requestId, chat, query):
     global time_for_inference, history_length, token_counter_history    
     time_for_inference = history_length = token_counter_history = 0
     
-    system = (
-        "다음의 Human과 Assistant의 친근한 이전 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. Assistant의 이름은 서연입니다. 답변은 한국어로 하세요."
-        #"Always answer without emojis in Korean."
-    )
+    #prompt_template = """
+    #<|begin_of_text|>
+    #    <|start_header_id|>system<|end_header_id|>\n\n다음의 Human과 Assistant의 친근한 이전 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. Assistant의 이름은 서연입니다. 답변은 한국어로 하세요.<|eot_id|>
+    #    <|start_header_id|>user<|end_header_id|>\n\n{text}<|eot_id|>
+    #    <|start_header_id|>assistant<|end_header_id|>\n\n
+    #"""
     
-    human = "{input}"
     
-    prompt = ChatPromptTemplate.from_messages([("system", system), MessagesPlaceholder(variable_name="history"), ("human", human)])
-    print('prompt: ', prompt)
+    #system = (
+    #    "다음의 Human과 Assistant의 친근한 이전 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. Assistant의 이름은 서연입니다. 답변은 한국어로 하세요."
+    #    #"Always answer without emojis in Korean."
+    #)
+    #prompt = ChatPromptTemplate.from_messages([("system", system), MessagesPlaceholder(variable_name="history"), ("human", human)])
+    #print('prompt: ', prompt)
+    #human = "{input}"
+    
+    #prompt = ChatPromptTemplate.from_messages([("system", system), MessagesPlaceholder(variable_name="history"), ("human", human)])
+    #print('prompt: ', prompt)
+    
+    template_messages = [
+        SystemMessage(content="다음의 Human과 Assistant의 친근한 이전 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. Assistant의 이름은 서연입니다. 답변은 한국어로 하세요."),
+        SystemMessagePromptTemplate.from_template("""<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n다음의 Human과 Assistant의 친근한 이전 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. Assistant의 이름은 서연입니다. 답변은 한국어로 하세요.<|eot_id|>""")
+        MessagesPlaceholder(variable_name="chat_history"),
+        HumanMessagePromptTemplate.from_template("""<|start_header_id|>user<|end_header_id|>\n\n{text}<|eot_id|>"""),
+    ]
+    prompt = ChatPromptTemplate.from_messages(template_messages)    
+   
     
     history = memory_chain.load_memory_variables({})["chat_history"]
     print('memory_chain: ', history)
