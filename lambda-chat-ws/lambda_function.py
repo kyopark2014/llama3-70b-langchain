@@ -247,7 +247,7 @@ def general_conversation(connectionId, requestId, chat, query):
     prompt = PromptTemplate(
         template="""
         <|begin_of_text|>
-            <|start_header_id|>system<|end_header_id|>\n\n다음의 History는 User와 Assistant의 이전 대화입니다. History를 참조하여 Qustion에 대해 친절히 답변하세요. Always answer without emojis in Korean.<|eot_id|>\n
+            <|start_header_id|>system<|end_header_id|>\n\nAlways answer without emojis in Korean.<|eot_id|>\n
             <|start_header_id|>user<|end_header_id|>\n\n{text}<|eot_id|>\n 
             <|start_header_id|>assistant<|end_header_id|>\n\n""",
             input_variables=["text"],
