@@ -255,11 +255,11 @@ def general_conversation(connectionId, requestId, chat, query):
     
     chain = prompt | chat
         
-    history = memory_chain.load_memory_variables({})["chat_history"]
-    print('memory_chain: ', history)
+    #history = memory_chain.load_memory_variables({})["chat_history"]
+    #print('memory_chain: ', history)
     
-    chat_history = get_chat_history(history)
-    print('chat_history: ', chat_history)
+    #chat_history = get_chat_history(history)
+    #print('chat_history: ', chat_history)
                 
     try: 
         isTyping(connectionId, requestId)  
