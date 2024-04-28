@@ -238,14 +238,8 @@ def general_conversation(connectionId, requestId, chat, query):
     prompt = PromptTemplate(
         template="""
         <|begin_of_text|>
-            <|start_header_id|>system<|end_header_id|>
-        
-            다음의 Human과 Assistant의 친근한 이전 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. Assistant의 이름은 서연입니다. 답변은 한국어로 하세요.<|eot_id|>
-        
-            <|start_header_id|>user<|end_header_id|>
-        
-            {text}<|eot_id|>
-        
+            <|start_header_id|>system<|end_header_id|>\n\n다음의 Human과 Assistant의 친근한 이전 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. Assistant의 이름은 서연입니다. 답변은 한국어로 하세요.<|eot_id|>\n
+            <|start_header_id|>user<|end_header_id|>\n\n{text}<|eot_id|>\n 
             <|start_header_id|>assistant<|end_header_id|>\n\n""",
             input_variables=["text"],
     )
