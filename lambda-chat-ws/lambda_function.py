@@ -37,45 +37,38 @@ connection_url = os.environ.get('connection_url')
 client = boto3.client('apigatewaymanagementapi', endpoint_url=connection_url)
 print('connection_url: ', connection_url)
 
-# bedrock   
-boto3_bedrock = boto3.client(
-    service_name='bedrock-runtime',
-    region_name=bedrock_region,
-    config=Config(
-        retries = {
-            'max_attempts': 30
-        }            
+def initiate_chat():
+    # bedrock   
+    boto3_bedrock = boto3.client(
+        service_name='bedrock-runtime',
+        region_name=bedrock_region,
+        config=Config(
+            retries = {
+                'max_attempts': 30
+            }            
+        )
     )
-)
 
-#HUMAN_PROMPT = "\n\nHuman:"
-#AI_PROMPT = "\n\nAssistant:"
-#HUMAN_PROMPT = "<|eot_id|>"
-HUMAN_PROMPT = "/SYS"
-# INST
-def get_parameter():
-    return {
+    #HUMAN_PROMPT = "\n\nHuman:"
+    #AI_PROMPT = "\n\nAssistant:"
+    #HUMAN_PROMPT = "<|eot_id|>"
+    HUMAN_PROMPT = "/SYS"
+    # INST
+    parameters = {
         "max_gen_len": 1024,  
         "top_p": 0.9, 
         "temperature": 0.1,
-        #"stop": "<|eot_id|>"
-        #"stop": [HUMAN_PROMPT]
-    }
-parameters = get_parameter()
+            #"stop": "<|eot_id|>"
+            #"stop": [HUMAN_PROMPT]
+    }    
+    chat = ChatBedrock(   
+        model_id=modelId,
+        client=boto3_bedrock, 
+        model_kwargs=parameters,
+    )  
+    return chat
 
-chat = BedrockChat(
-    model_id=modelId,
-    client=boto3_bedrock, 
-    #streaming=True,
-    #callbacks=[StreamingStdOutCallbackHandler()],
-    model_kwargs=parameters,
-)  
-"""
-chat = ChatBedrock(
-    model_id=modelId,
-    model_kwargs={"temperature": 0.1},
-)
-"""
+chat = initiate_chat()
 
 map_chain = dict() 
 MSG_LENGTH = 100
