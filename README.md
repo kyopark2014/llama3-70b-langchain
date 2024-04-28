@@ -24,5 +24,4 @@ It shows how to deploy a chatbot using Llama3 70B based on LangChain.
         <|start_header_id|>system<|end_header_id|>\n\nAlways answer without emojis in Korean<|eot_id|>
         <|start_header_id|>user<|end_header_id|>\n\n"{text}"<|eot_id|>
         <|start_header_id|>assistant<|end_header_id|>\n\n"""
-<|end_of_text|>
 ```
