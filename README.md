@@ -1,11 +1,21 @@
 # llama3-70b-langchain
 It shows how to deploy a chatbot using Llama3 70B based on LangChain.
 
-
-## Error Message
-
-```text
-/var/lang/lib/python3.11/site-packages/langchain_core/_api/deprecation.py:119: LangChainDeprecationWarning: The class `BedrockChat` was deprecated in LangChain 0.0.34 and will be removed in 0.3. An updated version of the class exists in the langchain-aws package and should be used instead. To use it run `pip install -U langchain-aws` and import as `from langchain_aws import ChatBedrock`.
-```
-
 [ChatBedrock](https://python.langchain.com/docs/integrations/chat/bedrock/)
+
+
+## Prompt formats
+
+[Meta Llama 3](https://llama.meta.com/docs/model-cards-and-prompt-formats/meta-llama-3/#special-tokens-used-with-meta-llama-3)에 따라면 아래와 같은 prompt를 가져야 합니다.
+
+- BOS (beginning of a sentence) token: <|begin_of_text|>
+
+- End of the message in a turn: <|eot_id|>
+
+- role for a particular message (system, user, assistant): <|start_header_id|>{role}<|end_header_id|>
+
+- EOS token: <|end_of_text|>
+
+
+
+
