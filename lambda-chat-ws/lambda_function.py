@@ -230,8 +230,54 @@ from langchain_core.prompts.chat import (
     MessagesPlaceholder,
 )
 
-
 def general_conversation(connectionId, requestId, chat, query):
+    global time_for_inference, history_length, token_counter_history    
+    time_for_inference = history_length = token_counter_history = 0
+    
+    prompt = PromptTemplate(
+    template="""
+    <|begin_of_text|>
+        <|start_header_id|>system<|end_header_id|>
+        
+        다음의 Human과 Assistant의 친근한 이전 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. Assistant의 이름은 서연입니다. 답변은 한국어로 하세요.<|eot_id|>
+        
+        <|start_header_id|>user<|end_header_id|>
+        
+        {text}<|eot_id|>
+        
+        <|start_header_id|>assistant<|end_header_id|>\n\n"""
+
+    
+    chain = prompt | chat | JsonOutputParser()
+        
+    #history = memory_chain.load_memory_variables({})["chat_history"]
+    #print('memory_chain: ', history)
+                
+    try: 
+        isTyping(connectionId, requestId)  
+        stream = chain.invoke(
+            {
+                # "history": history,
+                "text": query,
+            }
+        )
+        print('stream: ', stream)
+        
+        msg = readStreamMsg(connectionId, requestId, stream.content)    
+        
+        msg = stream.content
+        print('msg: ', msg)
+    except Exception:
+        err_msg = traceback.format_exc()
+        print('error message: ', err_msg)        
+            
+        sendErrorMessage(connectionId, requestId, err_msg)    
+        raise Exception ("Not able to request to LLM")
+    
+    return msg
+
+
+def general_conversation2(connectionId, requestId, chat, query):
     global time_for_inference, history_length, token_counter_history    
     time_for_inference = history_length = token_counter_history = 0
     
