@@ -23,6 +23,7 @@ from langchain.memory import ConversationBufferWindowMemory
 from langchain_aws import ChatBedrock
 from langchain.prompts import PromptTemplate
 
+
 s3 = boto3.client('s3')
 s3_bucket = os.environ.get('s3_bucket') # bucket name
 s3_prefix = os.environ.get('s3_prefix')
@@ -221,25 +222,7 @@ def isKorean(text):
         print('Not Korean: ', word_kor)
         return False
 
-from langchain.schema import BaseMessage
-_ROLE_MAP = {"human": "\n\nHuman: ", "ai": "\n\nAssistant: "}
-def get_chat_history(chat_history):
-    buffer = ""
-    for dialogue_turn in chat_history:
-        if isinstance(dialogue_turn, BaseMessage):
-            role_prefix = _ROLE_MAP.get(dialogue_turn.type, f"{dialogue_turn.type}: ")
-            buffer += f"\n{role_prefix}{dialogue_turn.content}"
-        elif isinstance(dialogue_turn, tuple):
-            human = "\n\nHuman: " + dialogue_turn[0]
-            ai = "\n\nAssistant: " + dialogue_turn[1]
-            buffer += "\n" + "\n".join([human, ai])
-        else:
-            raise ValueError(
-                f"Unsupported chat history format: {type(dialogue_turn)}."
-                f" Full chat history: {chat_history} "
-            )
-    return buffer
-
+from langchain_core.output_parsers import JsonOutputParser
 def general_conversation(connectionId, requestId, chat, query):
     global time_for_inference, history_length, token_counter_history    
     time_for_inference = history_length = token_counter_history = 0
@@ -247,7 +230,7 @@ def general_conversation(connectionId, requestId, chat, query):
     prompt = PromptTemplate(
         template="""
         <|begin_of_text|>
-            <|start_header_id|>system<|end_header_id|>\n\nAlways answer without emojis in Korean.<|eot_id|>\n
+            <|start_header_id|>system<|end_header_id|>\n\n다음의 Human과 Assistant의 친근한 이전 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. Assistant의 이름은 서연입니다. 답변은 한국어로 하세요.<|eot_id|>\n
             <|start_header_id|>user<|end_header_id|>\n\n{text}<|eot_id|>\n 
             <|start_header_id|>assistant<|end_header_id|>\n\n""",
             input_variables=["text"],
@@ -257,15 +240,12 @@ def general_conversation(connectionId, requestId, chat, query):
         
     #history = memory_chain.load_memory_variables({})["chat_history"]
     #print('memory_chain: ', history)
-    
-    #chat_history = get_chat_history(history)
-    #print('chat_history: ', chat_history)
                 
     try: 
         isTyping(connectionId, requestId)  
         stream = chain.invoke(
             {
-                #"chat_history": history,
+                # "history": history,
                 "text": query,
             }
         )
