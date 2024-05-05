@@ -333,9 +333,9 @@ function addSentMessage(requestId, timestr, text) {
     }
     else {
         index = indexList.get(requestId+':send');
-        console.log("reused index="+index+', id='+requestId+':send');        
+        // console.log("reused index="+index+', id='+requestId+':send');        
     }
-    console.log("index:", index);   
+    // console.log("index:", index);   
 
     var length = text.length;    
     console.log('length: ', length);
