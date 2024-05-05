@@ -241,7 +241,7 @@ def general_conversation(connectionId, requestId, chat, query):
 <|start_header_id|>user<|end_header_id|>
 You are an assistant for answering questions about IPM.
 You are given the extracted parts of a long document and a question. Provide a conversational answer.
-Question: {question}
+Question: {text}
 <|eot_id|><|start_header_id|>assistant<|end_header_id|>
 """
     
