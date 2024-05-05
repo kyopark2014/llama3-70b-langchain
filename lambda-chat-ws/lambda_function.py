@@ -226,15 +226,25 @@ from langchain_core.output_parsers import JsonOutputParser
 def general_conversation(connectionId, requestId, chat, query):
     global time_for_inference, history_length, token_counter_history    
     time_for_inference = history_length = token_counter_history = 0
+   
+    
+    #prompt = PromptTemplate(
+    #    template="""
+    #    <|begin_of_text|>
+    #        <|start_header_id|>system<|end_header_id|>\n\nAssistant의 이름은 서연입니다. Always answer without emojis in Korean.<|eot_id|>\n
+    #        <|start_header_id|>user<|end_header_id|>\n\n{text}<|eot_id|>\n 
+    #        <|start_header_id|>assistant<|end_header_id|>\n\n""",
+    #        input_variables=["text"],
+    #)
     
     prompt = PromptTemplate(
         template="""
-        <|begin_of_text|>
-            <|start_header_id|>system<|end_header_id|>\n\nAssistant의 이름은 서연입니다. Always answer without emojis in Korean.<|eot_id|>\n
-            <|start_header_id|>user<|end_header_id|>\n\n{text}<|eot_id|>\n 
-            <|start_header_id|>assistant<|end_header_id|>\n\n""",
-            input_variables=["text"],
-    )
+<|start_header_id|>user<|end_header_id|>
+You are an assistant for answering questions about IPM.
+You are given the extracted parts of a long document and a question. Provide a conversational answer.
+Question: {question}
+<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+"""
     
     chain = prompt | chat
         
