@@ -222,7 +222,7 @@ def isKorean(text):
         print('Not Korean: ', word_kor)
         return False
 
-from langchain_core.output_parsers import JsonOutputParser
+from langchain_core.output_parsers import StrOutputParser
 def general_conversation(connectionId, requestId, chat, query):
     global time_for_inference, history_length, token_counter_history    
     time_for_inference = history_length = token_counter_history = 0
@@ -250,7 +250,7 @@ Question: {text}
         input_variables=["text"],
     )
     
-    chain = prompt | chat
+    chain = prompt | chat | StrOutputParser()
         
     #history = memory_chain.load_memory_variables({})["chat_history"]
     #print('memory_chain: ', history)
