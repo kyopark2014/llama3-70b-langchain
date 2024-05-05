@@ -250,7 +250,7 @@ Question: {text}
         input_variables=["text"],
     )
     
-    chain = prompt | chat | StrOutputParser()
+    chain = prompt | chat #| StrOutputParser()
         
     #history = memory_chain.load_memory_variables({})["chat_history"]
     #print('memory_chain: ', history)
