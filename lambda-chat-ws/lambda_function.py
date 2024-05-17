@@ -309,7 +309,7 @@ Assistant의 이름은 서연이고, 모르는 질문을 받으면 솔직히 모
         stream = chain.invoke(
             {
                 "history": history,
-                "text": query,
+                "input": query,
             }
         )
         print('stream: ', stream)
