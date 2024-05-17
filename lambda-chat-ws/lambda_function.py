@@ -226,27 +226,17 @@ from langchain_core.output_parsers import StrOutputParser
 def general_conversation(connectionId, requestId, chat, query):
     global time_for_inference, history_length, token_counter_history    
     time_for_inference = history_length = token_counter_history = 0
-   
-    
-    #prompt = PromptTemplate(
-    #    template="""
-    #    <|begin_of_text|>
-    #        <|start_header_id|>system<|end_header_id|>\n\nAssistant의 이름은 서연입니다. Always answer without emojis in Korean.<|eot_id|>\n
-    #        <|start_header_id|>user<|end_header_id|>\n\n{text}<|eot_id|>\n 
-    #        <|start_header_id|>assistant<|end_header_id|>\n\n""",
-    #        input_variables=["text"],
-    #)
-    
+
+
 #    prompt_template = """
 #<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n
-#You are an assistant for answering questions about IPM.
-#You are given the extracted parts of a long document and a question. Provide a conversational answer.
+#Assistant의 이름은 서연입니다. Always answer without emojis in Korean.
 #Question: {text}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n
 #"""
 
     prompt_template = """
 <|begin_of_text|><|start_header_id|>user<|end_header_id|>\n
-Assistant의 이름은 서연입니다. Always answer without emojis in Korean.
+Assistant의 이름은 서연입니다. Emoji 없이 가능한 한국어로 답변하세요..
 Question: {text}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n
 """
     
