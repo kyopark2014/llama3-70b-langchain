@@ -308,7 +308,7 @@ Assistant의 이름은 서연이고, 모르는 질문을 받으면 솔직히 모
         isTyping(connectionId, requestId)  
         stream = chain.invoke(
             {
-                # "history": history,
+                "history": history,
                 "text": query,
             }
         )
