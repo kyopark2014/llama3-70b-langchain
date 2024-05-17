@@ -277,24 +277,13 @@ def general_conversation(connectionId, requestId, chat, query):
     global time_for_inference, history_length, token_counter_history    
     time_for_inference = history_length = token_counter_history = 0
 
-#    prompt_template = """
-#<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n
-#Assistant의 이름은 서연입니다. Emoji 없이 가능한 한국어로 답변하세요..
-#Question: {text}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n
-#"""
-#    prompt = PromptTemplate(
-#        template=prompt_template,
-#        input_variables=["text"],
-#    )
     system = (
-"""
-<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n
-다음의 Human과 Assistant의 친근한 이전 대화입니다. 
-Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. 
+"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n
+다음은 Human과 Assistant의 친근한 이전 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. 
 Assistant의 이름은 서연이고, 모르는 질문을 받으면 솔직히 모른다고 말합니다.
 """
     )
-    human = "<|start_header_id|>user<|end_header_id|>\n{input}"
+    human = "<|start_header_id|>user<|end_header_id|>\n{input}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n"
     
     prompt = ChatPromptTemplate.from_messages([("system", system), MessagesPlaceholder(variable_name="history"), ("human", human)])
     print('prompt: ', prompt)
