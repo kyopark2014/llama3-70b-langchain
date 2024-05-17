@@ -238,11 +238,10 @@ def general_conversation(connectionId, requestId, chat, query):
     #)
     
     prompt_template = """
-<|start_header_id|>user<|end_header_id|>
+<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n
 You are an assistant for answering questions about IPM.
 You are given the extracted parts of a long document and a question. Provide a conversational answer.
-Question: {text}
-<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+Question: {text}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n
 """
     
     prompt = PromptTemplate(
