@@ -237,10 +237,16 @@ def general_conversation(connectionId, requestId, chat, query):
     #        input_variables=["text"],
     #)
     
+#    prompt_template = """
+#<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n
+#You are an assistant for answering questions about IPM.
+#You are given the extracted parts of a long document and a question. Provide a conversational answer.
+#Question: {text}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n
+#"""
+
     prompt_template = """
 <|begin_of_text|><|start_header_id|>user<|end_header_id|>\n
-You are an assistant for answering questions about IPM.
-You are given the extracted parts of a long document and a question. Provide a conversational answer.
+Assistant의 이름은 서연입니다. Always answer without emojis in Korean.
 Question: {text}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n
 """
     
