@@ -15,6 +15,22 @@ LLM의 응답시간은 수초이상이므로 Stream을 사용하여 사용성을
 
 ### 채팅 이력의 활용
 
+여기에서는 [ConversationBufferWindowMemory](https://api.python.langchain.com/en/latest/memory/langchain.memory.buffer_window.ConversationBufferWindowMemory.html)을 이용하여 대화이력을 저장하기 위한 메모리를 정의합니다. 새로운 대화은 아래와 같이 add_user_message()와 add_ai_message()와 같이 저장합니다.
+
+```python
+memory_chain = ConversationBufferWindowMemory(memory_key="chat_history", output_key='answer', return_messages=True, k=10)
+
+memory_chain.chat_memory.add_user_message(text)
+memory_chain.chat_memory.add_ai_message(msg)
+```
+
+채팅에서 이전 대화이력은 아래와 같이 로드하여 사용합니다. 
+
+```python
+history = memory_chain.load_memory_variables({})["chat_history"]
+```
+
+
 
 
 ## Prompt formats
