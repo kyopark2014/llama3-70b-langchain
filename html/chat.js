@@ -331,8 +331,8 @@ function getTime(current) {
 function addSentMessage(requestId, timestr, text) {
     let idx = index;
     if(!indexList.get(requestId+':send')) {
-        indexList.put(requestId+':send', index);             
         index++;
+        indexList.put(requestId+':send', index);        
     }
     else {
         index = indexList.get(requestId+':send');
