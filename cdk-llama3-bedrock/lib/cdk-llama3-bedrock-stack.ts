@@ -17,8 +17,7 @@ const accountId = process.env.CDK_DEFAULT_ACCOUNT
 const debug = false;
 const stage = 'dev';
 const s3_prefix = 'docs';
-//const model_id = "meta.llama3-8b-instruct-v1:0";
-const model_id = "meta.llama3-70b-instruct-v1:0";
+const model_id = "meta.llama3-70b-instruct-v1:0";  // "meta.llama3-8b-instruct-v1:0";
 const projectName = `llama3-70b-langchain`;  
 
 const bucketName = `storage-for-${projectName}-${accountId}-${region}`; 
