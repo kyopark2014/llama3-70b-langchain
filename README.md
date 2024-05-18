@@ -68,14 +68,50 @@ history = memory_chain.load_memory_variables({})["chat_history"]
 
 - EOS token: <|end_of_text|>
 
+상기 조건에 맞는 Prompt는 아래와 같습니다.
 
-예는 아래와 같습니다.
-
-```text
-<|begin_of_text|>
-        <|start_header_id|>system<|end_header_id|>\n\nAlways answer without emojis in Korean<|eot_id|>
-        <|start_header_id|>user<|end_header_id|>\n\n"{text}"<|eot_id|>
-        <|start_header_id|>assistant<|end_header_id|>\n\n"""
+```python
+def general_conversation(connectionId, requestId, chat, query):
+    system = (
+"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n
+다음은 Human과 AI의 친근한 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. 
+Assistant의 이름은 서연이고, Emoji 없이 가능한 한국어로 답변하세요. 또한, 한자는 한국어로 변환합니다.<|eot_id|>"""
+    )
+    human = """<|start_header_id|>user<|end_header_id|>\n\n{input}<|eot_id|><|start_header_id|>assistant<|end_header_id|>"""
+    
+    prompt = ChatPromptTemplate.from_messages([("system", system), MessagesPlaceholder(variable_name="history"), ("human", human)])
+    print('prompt: ', prompt)
+    
+    chain = prompt | chat
+        
+    history = memory_chain.load_memory_variables({})["chat_history"]
+    print('memory_chain: ', history)
+                
+    try: 
+        isTyping(connectionId, requestId)  
+        stream = chain.invoke(
+            {
+                "history": history,
+                "input": query,
+            }
+        )
+        msg = readStreamMsg(connectionId, requestId, stream.content)
+        
+        print('stream: ', stream)        
+        usage = stream.response_metadata['usage']
+        print('prompt_tokens: ', usage['prompt_tokens'])
+        print('completion_tokens: ', usage['completion_tokens'])
+        print('total_tokens: ', usage['total_tokens'])
+        msg = stream.content
+        
+    except Exception:
+        err_msg = traceback.format_exc()
+        print('error message: ', err_msg)        
+            
+        sendErrorMessage(connectionId, requestId, err_msg)    
+        raise Exception ("Not able to request to LLM")
+    
+    return msg
 ```
 
 ### Stream의 처리
