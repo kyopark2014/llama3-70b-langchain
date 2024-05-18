@@ -186,6 +186,7 @@ def readStreamMsg(connectionId, requestId, stream):
 
 <img width="853" alt="image" src="https://github.com/kyopark2014/llama3-70b-langchain/assets/52392004/cd04eeee-420c-4d60-9976-5271e4ab3459">
 
+[error_code.pdf](./contents/error_code.pdf)을 다운로드 한 후에, 채팅창의 파일 아이콘을 선택하여 업로드를 하면 아래와 같이 파일 내용을 요약한 결과를 확인할 수 있습니다.
 
 
 ## 리소스 정리하기 
