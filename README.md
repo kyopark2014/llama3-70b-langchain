@@ -176,6 +176,16 @@ def readStreamMsg(connectionId, requestId, stream):
 
 ## 실행결과
 
+채탱창이 열리면 "여행하고 싶다."라고 입력합니다. 아래와 같이 영향의 의미와 대표적인 관광지에 대한 정보를 보여줍니다.
+
+<img width="850" alt="image" src="https://github.com/kyopark2014/llama3-70b-langchain/assets/52392004/f29ffcb8-859a-4c71-8731-c977ff02bedd">
+
+"경주"라고 입력하면, 이전 대화에서 여행에 대해 얘기했으므로, 경주의 여행정보를 아래와 같이 보여줍니다. Llama3는 아직 [multilingual을 공식적으로 지원하지 않고 있어](https://ai.meta.com/blog/meta-llama-3/), 일부 부족한 면이 있으나 어느정도 수준의 한국어를 지원하고 있습니다. 
+
+<img width="853" alt="image" src="https://github.com/kyopark2014/llama3-70b-langchain/assets/52392004/cd04eeee-420c-4d60-9976-5271e4ab3459">
+
+
+
 ## 리소스 정리하기 
 
 더이상 인프라를 사용하지 않는 경우에 아래처럼 모든 리소스를 삭제할 수 있습니다. 
