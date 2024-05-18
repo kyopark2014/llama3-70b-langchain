@@ -1,8 +1,8 @@
-# Llama3 70B와 Langchain으로 한국어 챗봇 만들기
+# Llama3 70B와 Langchain으로 한국어 Chatbot 만들기
 
 여기에서는 LangChain으로 Llama 70B를 이용해 한국어 챗봇을 만드는 것을 설명합니다. Llama 70B는 대용량 메모리와 GPU를 필요로 하므로, 가벼운 동작테스트를 위해 SageMaker JumpStart를 이용하는것은 부담스러울수 있습니다. 여기에서는 Bedrock API를 이용해 GPU가 포함된 인프라를 구축하지 않고 손쉽게 Llama3 70B로 한국어 챗봇을 구현합니다. 또한, LangChain을 이용해 코드 개발 기간을 단축하고 다른 모델에서 사용된 유사 코드를 가능한 수정없이 사용하고자 합니다. 
 
-## 한국어 챗봇의 구현
+## 한국어 Chatbot의 구현
 
 ### Llama3 API
 
