@@ -188,6 +188,18 @@ def readStreamMsg(connectionId, requestId, stream):
 
 [error_code.pdf](./contents/error_code.pdf)을 다운로드 한 후에, 채팅창의 파일 아이콘을 선택하여 업로드를 하면 아래와 같이 파일 내용을 요약한 결과를 확인할 수 있습니다.
 
+<img width="856" alt="image" src="https://github.com/kyopark2014/llama3-70b-langchain/assets/52392004/3c3b3a9d-9da5-4810-b313-e2ade4754c9f">
+
+브라우저에서 뒤로가기를 선택하여 아래와 같이 Conversation Type을 "2. Trnaslation"을 선택하고, "경주는 우리나라의 역사적인 도시입니다. 경주는 신라왕조의 수도였으며, 많은 문화유산을 가지고 있습니다. 경주에는 다양한 관광지가 있습니다. 불국사는 유네스코 세계문화유산으로 지정된 사찰입니다. 이 곳에는 많은 문화재가 있습니다. 둘째, 석굴암은 불국사와 함께 유네스코 세계문화유산으로 지정된 석굴입니다. 이 곳에는 많은 불상이 있습니다. 셋째, 경주歴史公園은 경주의 역사적인 문화유산을 느낄 수 있는 곳입니다. 이 곳에는 안압지, 첨성대, 황룡사지 등이 있습니다. 넷째, 양동마을은 전통한옥마을로 옛날의 모습을 그대로 간직하고 있습니다. 경주에는 역사적인 문화유산이 많아 역사에 관심이 있는 분들에게 추천합니다. 또한, 경주는 자연경관도 아름답습니다. 경주를 방문하여 다양한 경험을 하실 수 있습니다."라고 입력합니다.
+
+<img width="479" alt="image" src="https://github.com/kyopark2014/llama3-70b-langchain/assets/52392004/6a35985a-9c59-40bf-9352-289ff524edf2">
+
+이때의 번역 결과는 아래와 같습니다.
+
+<img width="854" alt="image" src="https://github.com/kyopark2014/llama3-70b-langchain/assets/52392004/ed26a74b-06c8-4f87-824f-96e0aeda07c6">
+
+
+
 
 ## 리소스 정리하기 
 
