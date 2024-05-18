@@ -173,9 +173,6 @@ def readStreamMsg(connectionId, requestId, stream):
 - [AWS Account 생성](https://repost.aws/ko/knowledge-center/create-and-activate-aws-account)
 
 
-### CDK를 이용한 인프라 설치
-[인프라 설치](./deployment.md)에 따라 CDK로 인프라 설치를 진행합니다. 
-
 ## 실행결과
 
 채탱창이 열리면 "여행하고 싶다."라고 입력합니다. 아래와 같이 영향의 의미와 대표적인 관광지에 대한 정보를 보여줍니다.
