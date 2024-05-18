@@ -190,7 +190,7 @@ def readStreamMsg(connectionId, requestId, stream):
 
 <img width="856" alt="image" src="https://github.com/kyopark2014/llama3-70b-langchain/assets/52392004/3c3b3a9d-9da5-4810-b313-e2ade4754c9f">
 
-브라우저에서 뒤로가기를 선택하여 아래와 같이 Conversation Type을 "2. Translation"을 선택합니다. 
+브라우저에서 뒤로가기를 선택하여 아래와 같이 Conversation Type을 "2. Translation"로 선택합니다. 
 
 <img width="479" alt="image" src="https://github.com/kyopark2014/llama3-70b-langchain/assets/52392004/6a35985a-9c59-40bf-9352-289ff524edf2">
 
