@@ -67,9 +67,9 @@ history = memory_chain.load_memory_variables({})["chat_history"]
 
 
 
-## Prompt formats
+## Prompt format
 
-[Meta Llama 3 Instract](https://llama.meta.com/docs/model-cards-and-prompt-formats/meta-llama-3/#special-tokens-used-with-meta-llama-3)에 따라 아래와 같은 prompt foramt을 가져야 합니다.
+[Meta Llama 3 Instract](https://llama.meta.com/docs/model-cards-and-prompt-formats/meta-llama-3/#special-tokens-used-with-meta-llama-3)에 따라 아래와 같은 prompt format을 가져야 합니다.
 
 - BOS (beginning of a sentence) token: <|begin_of_text|>
 
@@ -81,12 +81,26 @@ history = memory_chain.load_memory_variables({})["chat_history"]
 
 상기 조건에 맞는 Prompt는 아래와 같습니다.
 
+```text
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+다음은 Human과 AI의 친근한 대화입니다. AI는 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. 
+AI의 이름은 서연이고, Emoji 없이 가능한 한국어로 답변하세요. 또한, 한자는 한국어로 변환합니다.<|eot_id|>
+<|start_header_id|>user<|end_header_id|>
+
+{input}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+```
+
+## LangChain의 Chain을 이용한 요청
+
+아래는 일반적인 대화의 응답을 Llama3에 요청하는 함수입니다. Prompt에서는 대화의 형태의 Chatbot의 이름을 지정합니다. 또한 원하는 포맷이나 답변을 지정하는데, 여기에서는 Emoji없는 한국어 답변을 요청하였습니다. 또한, 답변에 한자나 일본어가 있을 경우에 한국어로 변환을 요청합니다. 
+
 ```python
 def general_conversation(connectionId, requestId, chat, query):
     system = (
 """<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n
-다음은 Human과 AI의 친근한 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. 
-Assistant의 이름은 서연이고, Emoji 없이 가능한 한국어로 답변하세요. 또한, 한자는 한국어로 변환합니다.<|eot_id|>"""
+다음은 Human과 AI의 친근한 대화입니다. AI는 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. 
+AI의 이름은 서연이고, Emoji 없이 가능한 한국어로 답변하세요. 또한, 한자는 한국어로 변환합니다.<|eot_id|>"""
     )
     human = """<|start_header_id|>user<|end_header_id|>\n\n{input}<|eot_id|><|start_header_id|>assistant<|end_header_id|>"""
     
