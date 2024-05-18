@@ -45,6 +45,8 @@ chat = ChatBedrock(
 )
 ```
 
+[error_code.pdf](./contents/error_code.pdf) 파일을 다운로드 한 후에 채팅창의 파일 아이콘을 선택하어 업로드합니다.
+
 
 
 ### 채팅 이력의 활용
