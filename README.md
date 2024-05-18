@@ -6,11 +6,12 @@
 
 ### Llama3 API
 
-여기에서는 LangChain의 [ChatBedrock](https://python.langchain.com/docs/integrations/chat/bedrock/)을 이용해 Llama3 API를 이용합니다. 
+여기에서는 LangChain의 [ChatBedrock](https://python.langchain.com/docs/integrations/chat/bedrock/)을 이용해 Llama3 API를 이용합니다. ChatBedrock을 이용하기 위해서 아래와 같이 bedrock-runtime을 위한 boto3_bedrock을 정의하고 LLM Parameter를 지정한 후에 modelId로 "meta.llama3-70b-instruct-v1:0"을 설정합니다.
 
 ```python
 from langchain_aws import ChatBedrock
-
+bedrock_region = 'us-west-2'
+modelId = "meta.llama3-70b-instruct-v1:0"
 boto3_bedrock = boto3.client(
     service_name='bedrock-runtime',
     region_name=bedrock_region,
