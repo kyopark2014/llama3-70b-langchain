@@ -335,7 +335,7 @@ function addSentMessage(requestId, timestr, text) {
         index++;
     }
     else {
-        index = indexList.get(requestId+':send');
+        idx = indexList.get(requestId+':send');
         // console.log("reused index="+index+', id='+requestId+':send');        
     }
     // console.log("index:", index);   
@@ -391,8 +391,8 @@ function addSentMessageForSummary(requestId, timestr, text) {
         index++;     
     }
     else {
-        index = indexList.get(requestId+':send');
-        console.log("reused index="+index+', id='+requestId+':send');        
+        idx = indexList.get(requestId+':send');
+        console.log("reused index="+idx+', id='+requestId+':send');        
     }
     console.log("idx:", idx);   
 
