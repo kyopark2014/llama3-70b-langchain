@@ -51,17 +51,10 @@ def initiate_chat():
         )
     )
 
-    #HUMAN_PROMPT = "\n\nHuman:"
-    #AI_PROMPT = "\n\nAssistant:"
-    #HUMAN_PROMPT = "<|eot_id|>"
-    HUMAN_PROMPT = "/SYS"
-    # INST
     parameters = {
         "max_gen_len": 1024,  
         "top_p": 0.9, 
         "temperature": 0.1,
-            #"stop": "<|eot_id|>"
-            #"stop": [HUMAN_PROMPT]
     }    
     chat = ChatBedrock(   
         model_id=modelId,

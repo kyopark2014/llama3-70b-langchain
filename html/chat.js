@@ -105,7 +105,7 @@ function connect(endpoint, type) {
 
             for(i in keys) {
                 let message = undelivered.get(keys[i])
-                console.log('message', message)
+                // console.log('message', message)
                 if(!sendMessage(message)) break;
                 else {
                     undelivered.remove(message.request_id)
@@ -418,9 +418,9 @@ function addReceivedMessage(requestId, msg) {
     }
     else {
         index = indexList.get(requestId+':receive');
-        console.log("reused index="+index+', id='+requestId+':receive');        
+        // console.log("reused index="+index+', id='+requestId+':receive');        
     }
-    console.log("index:", idx);   
+    // console.log("index:", idx);   
 
     msg = msg.replaceAll("\n", "<br/>");
 
