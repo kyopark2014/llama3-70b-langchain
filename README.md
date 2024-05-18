@@ -2,8 +2,13 @@
 
 여기에서는 LangChain으로 Llama 70B를 이용해 한국어 챗봇을 만드는 것을 설명합니다. Llama 70B는 대용량 메모리와 GPU를 필요로 하므로, 가벼운 동작테스트를 위해 SageMaker JumpStart를 이용하는것은 부담스러울수 있습니다. 여기에서는 Bedrock API를 이용해 GPU가 포함된 인프라를 구축하지 않고 손쉽게 Llama3 70B로 한국어 챗봇을 구현합니다. 또한, LangChain을 이용해 코드 개발 기간을 단축하고 다른 모델에서 사용된 유사 코드를 가능한 수정없이 사용하고자 합니다. 
 
-전체적인 Architecture는 아래와 같습니다.
-
+전체적인 Architecture는 아래와 같으며, 아래와 같이 동작합니다.
+1) 사용자는 CloudFront의 도메인으로 접속하면 S3에서 html, js, css 파일들을 읽어와서 브라우저 화면에 채팅창을 구성합니다.
+2) 이전 대화를 읽어오기 위하여 '/history' API를 호출합니다. 이때 사용자의 접속 userId를 이용하여 DynamoDB에 저장되어 있는 history를 읽어옵니다.
+3) 사용자가 채팅화면에서 질문을 입력하면, WebSocket 방식으로 API Gateway를 통해 요청을 [Lambda-chat](./lambda-chat-ws/lambda_function.py)에 전달합니다.
+4) Lambda-chat은 사용자의 request에서 userId를 추출하여, DynamoDB에 있는 대화이력을 가져옵니다.
+5) Lambda-chat은 Llama3에 채팅이력(chat history)와 함께 질문을 전달합니다.
+6) Llama3의 응답은 API Gateway를 통해 사용자에게 전달됩니다.
 
 ![image](https://github.com/kyopark2014/llama3-70b-langchain/assets/52392004/ed87b5ee-2af6-4ddc-8c63-6fb2837c3735)
 
