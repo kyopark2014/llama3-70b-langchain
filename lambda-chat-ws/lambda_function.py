@@ -218,9 +218,6 @@ def isKorean(text):
         return False
 
 def single_conversation(connectionId, requestId, chat, query):
-    global time_for_inference, history_length, token_counter_history    
-    time_for_inference = history_length = token_counter_history = 0
-
     prompt_template = """
 <|begin_of_text|><|start_header_id|>user<|end_header_id|>\n
 Assistant의 이름은 서연입니다. Emoji 없이 가능한 한국어로 답변하세요..
@@ -256,9 +253,6 @@ Question: {text}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n
     return msg
 
 def general_conversation(connectionId, requestId, chat, query):
-    global time_for_inference, history_length, token_counter_history    
-    time_for_inference = history_length = token_counter_history = 0
-
     system = (
 """<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n
 다음은 Human과 AI의 친근한 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. 
@@ -282,11 +276,9 @@ Assistant의 이름은 서연이고, Emoji 없이 가능한 한국어로 답변�
                 "input": query,
             }
         )
-        print('stream: ', stream)
-        
         msg = readStreamMsg(connectionId, requestId, stream.content)
         
-        print('stream: ', stream)
+        print('stream: ', stream)        
         usage = stream.response_metadata['usage']
         print('prompt_tokens: ', usage['prompt_tokens'])
         print('completion_tokens: ', usage['completion_tokens'])
