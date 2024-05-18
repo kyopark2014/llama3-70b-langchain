@@ -149,14 +149,16 @@ def get_summary(chat, docs):
     
     if isKorean(text)==True:
         system = (
-            "다음의 <article> tag안의 문장을 요약해서 500자 이내로 설명하세오."
+"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n
+다음의 <article> tag안의 문장을 요약해서 500자 이내로 설명하세오.<|eot_id|>"""
         )
     else: 
         system = (
-            "Here is pieces of article, contained in <article> tags. Write a concise summary within 500 characters."
+"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n
+Here is pieces of article, contained in <article> tags. Write a concise summary within 500 characters.<|eot_id|>"""
         )
     
-    human = "<article>{text}</article>"
+    human = """<|start_header_id|>user<|end_header_id|>\n\n<article>{text}</article><|eot_id|><|start_header_id|>assistant<|end_header_id|>"""
     
     prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
     print('prompt: ', prompt)
@@ -289,10 +291,15 @@ Assistant의 이름은 서연이고, Emoji 없이 가능한 한국어로 답변�
         )
         print('stream: ', stream)
         
-        msg = readStreamMsg(connectionId, requestId, stream.content)    
+        msg = readStreamMsg(connectionId, requestId, stream.content)
         
+        print('stream: ', stream)
+        usage = stream.response_metadata['usage']
+        print('prompt_tokens: ', usage['prompt_tokens'])
+        print('completion_tokens: ', usage['completion_tokens'])
+        print('total_tokens: ', usage['total_tokens'])
         msg = stream.content
-        print('msg: ', msg)
+        
     except Exception:
         err_msg = traceback.format_exc()
         print('error message: ', err_msg)        
@@ -571,6 +578,7 @@ def getResponse(connectionId, jsonBody):
         elapsed_time = int(time.time()) - start
         print("total run time(sec): ", elapsed_time)
         
+        sendResultMessage(connectionId, requestId, msg)
         print('msg: ', msg)
 
         item = {
