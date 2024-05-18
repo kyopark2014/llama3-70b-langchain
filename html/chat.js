@@ -330,9 +330,9 @@ function getTime(current) {
 
 function addSentMessage(requestId, timestr, text) {
     let idx = index;
-    if(!indexList.get(requestId+':send')) {
+    if(!indexList.get(requestId+':send')) {        
+        indexList.put(requestId+':send', index);
         index++;
-        indexList.put(requestId+':send', index);        
     }
     else {
         index = indexList.get(requestId+':send');
@@ -385,27 +385,28 @@ function addSentMessage(requestId, timestr, text) {
 function addSentMessageForSummary(requestId, timestr, text) {  
     console.log("sent message: "+text);
 
+    idx = index
     if(!indexList.get(requestId+':send')) {
-        indexList.put(requestId+':send', index);             
+        indexList.put(requestId+':send', index);
+        index++;     
     }
     else {
         index = indexList.get(requestId+':send');
         console.log("reused index="+index+', id='+requestId+':send');        
     }
-    console.log("index:", index);   
+    console.log("idx:", idx);   
 
     let length = text.length;
     if(length < 100) {
-        msglist[index].innerHTML = 
-            `<div class="chat-sender60 chat-sender--right"><h1>${timestr}</h1>${text}&nbsp;<h2 id="status${index}"></h2></div>`;   
+        msglist[idx].innerHTML = 
+            `<div class="chat-sender60 chat-sender--right"><h1>${timestr}</h1>${text}&nbsp;<h2 id="status${idx}"></h2></div>`;   
     }
     else {
-        msglist[index].innerHTML = 
-            `<div class="chat-sender80 chat-sender--right"><h1>${timestr}</h1>${text}&nbsp;<h2 id="status${index}"></h2></div>`;
+        msglist[idx].innerHTML = 
+            `<div class="chat-sender80 chat-sender--right"><h1>${timestr}</h1>${text}&nbsp;<h2 id="status${idx}"></h2></div>`;
     }   
 
-    chatPanel.scrollTop = chatPanel.scrollHeight;  // scroll needs to move bottom
-    index++;
+    chatPanel.scrollTop = chatPanel.scrollHeight;  // scroll needs to move bottom    
 }  
 
 function addReceivedMessage(requestId, msg) {
@@ -414,11 +415,11 @@ function addReceivedMessage(requestId, msg) {
     sender = "Chatbot"
     
     if(!indexList.get(requestId+':receive')) {
-        indexList.put(requestId+':receive', index);         
-        index++;    
+        indexList.put(requestId+':receive', index);
+        index++;
     }
     else {
-        index = indexList.get(requestId+':receive');
+        idx = indexList.get(requestId+':receive');
         // console.log("reused index="+index+', id='+requestId+':receive');        
     }
     // console.log("index:", idx);   
