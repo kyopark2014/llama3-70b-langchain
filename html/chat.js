@@ -130,9 +130,10 @@ function connect(endpoint, type) {
         }
         else {
             response = JSON.parse(event.data)
+            console.log('response: ', response)
 
             if(response.status == 'completed') {          
-                feedback.style.display = 'none';          
+                feedback.style.display = 'none';
                 console.log('received message: ', response.msg);                  
                 addReceivedMessage(response.request_id, response.msg);  
             }                
