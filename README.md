@@ -25,7 +25,7 @@ LLM의 응답시간은 수초이상이므로 Stream을 사용하여 사용성을
 
 - End of the message in a turn: <|eot_id|>
 
-- role for a particular message (system, user, assistant): <|start_header_id|>{role}<|end_header_id|>
+- Role for a particular message (system, user, assistant): <|start_header_id|>{role}<|end_header_id|>
 
 - EOS token: <|end_of_text|>
 
