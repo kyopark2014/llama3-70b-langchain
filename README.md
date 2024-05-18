@@ -93,7 +93,8 @@ AI의 이름은 서연이고, Emoji 없이 가능한 한국어로 답변하세�
 
 ## LangChain의 Chain을 이용한 요청
 
-아래는 일반적인 대화의 응답을 Llama3에 요청하는 함수입니다. Prompt에서는 대화의 형태의 Chatbot의 이름을 지정합니다. 또한 원하는 포맷이나 답변을 지정하는데, 여기에서는 Emoji없는 한국어 답변을 요청하였습니다. 또한, 답변에 한자나 일본어가 있을 경우에 한국어로 변환을 요청합니다. 
+아래는 일반적인 대화의 응답을 Llama3에 요청하는 함수입니다. Prompt에서는 대화의 형태의 Chatbot의 이름을 지정합니다. 또한 원하는 포맷이나 답변을 지정하는데, 여기에서는 Emoji없는 한국어 답변을 요청하였습니다. 또한, 답변에 한자나 일본어가 있을 경우에 한국어로 변환을 요청합니다. 대화이력을 읽어와서 "history"로 입력하고, 사용자의 입력은 "input"로 invoke시 전달합니다. 이때의 응답에는 사용 토큰에 대한 정보를 아래와 같이 포함하고 있습니다. 
+
 
 ```python
 def general_conversation(connectionId, requestId, chat, query):
@@ -139,8 +140,51 @@ AI의 이름은 서연이고, Emoji 없이 가능한 한국어로 답변하세�
     return msg
 ```
 
-### Stream의 처리
+LLM의 응답시간은 수초이상이므로 Stream을 사용하여 사용성을 개선합니다. 아래와 같이 inovke의 응답에서 stream 정보를 추출하여 client로 전달합니다.
 
-LLM의 응답시간은 수초이상이므로 Stream을 사용하여 사용성을 개선합니다. 
+```python
+def readStreamMsg(connectionId, requestId, stream):
+    msg = ""
+    if stream:
+        for event in stream:
+            msg = msg + event
 
+            result = {
+                'request_id': requestId,
+                'msg': msg,
+                'status': 'proceeding'
+            }
+            sendMessage(connectionId, result)
+    return msg
+```
+
+### AWS CDK로 인프라 구현하기
+
+[CDK 구현 코드](./cdk-korean-chatbot/README.md)에서는 Typescript로 인프라를 정의하는 방법에 대해 상세히 설명하고 있습니다.
+
+## 직접 실습 해보기
+
+### 사전 준비 사항
+
+이 솔루션을 사용하기 위해서는 사전에 아래와 같은 준비가 되어야 합니다.
+
+- [AWS Account 생성](https://repost.aws/ko/knowledge-center/create-and-activate-aws-account)
+
+
+### CDK를 이용한 인프라 설치
+[인프라 설치](./deployment.md)에 따라 CDK로 인프라 설치를 진행합니다. 
+
+## 실행결과
+
+## 리소스 정리하기 
+
+더이상 인프라를 사용하지 않는 경우에 아래처럼 모든 리소스를 삭제할 수 있습니다. 
+
+1) [API Gateway Console](https://ap-northeast-2.console.aws.amazon.com/apigateway/main/apis?region=ap-northeast-2)로 접속하여 "rest-api-for-llama3-70b-langchain", "ws-api-for-llama3-70b-langchain"을 삭제합니다.
+
+2) [Cloud9 console](https://ap-northeast-2.console.aws.amazon.com/cloud9control/home?region=ap-northeast-2#/)에 접속하여 아래의 명령어로 전체 삭제를 합니다.
+
+```text
+cd ~/environment/llama3-70b-langchain/cdk-llama3-bedrock/ && cdk destroy --all
+```
 
