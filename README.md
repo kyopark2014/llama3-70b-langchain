@@ -19,7 +19,7 @@ LLM의 응답시간은 수초이상이므로 Stream을 사용하여 사용성을
 
 ## Prompt formats
 
-[Meta Llama 3 Instract](https://llama.meta.com/docs/model-cards-and-prompt-formats/meta-llama-3/#special-tokens-used-with-meta-llama-3)에 따라 아래와 같은 prompt를 가져야 합니다.
+[Meta Llama 3 Instract](https://llama.meta.com/docs/model-cards-and-prompt-formats/meta-llama-3/#special-tokens-used-with-meta-llama-3)에 따라 아래와 같은 prompt foramt을 가져야 합니다.
 
 - BOS (beginning of a sentence) token: <|begin_of_text|>
 
