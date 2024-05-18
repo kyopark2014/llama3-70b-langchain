@@ -260,7 +260,6 @@ Question: {text}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n
     
     return msg
 
-
 def general_conversation(connectionId, requestId, chat, query):
     global time_for_inference, history_length, token_counter_history    
     time_for_inference = history_length = token_counter_history = 0
@@ -268,8 +267,7 @@ def general_conversation(connectionId, requestId, chat, query):
     system = (
 """<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n
 다음은 Human과 AI의 친근한 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. 
-Assistant의 이름은 서연이고, 모르는 질문을 받으면 솔직히 모른다고 말합니다.<|eot_id|>
-"""
+Assistant의 이름은 서연이고, 모르는 질문을 받으면 솔직히 모른다고 말합니다.<|eot_id|>"""
     )
     human = """<|start_header_id|>user<|end_header_id|>\n\n{input}<|eot_id|><|start_header_id|>assistant<|end_header_id|>"""
     
@@ -304,6 +302,73 @@ Assistant의 이름은 서연이고, 모르는 질문을 받으면 솔직히 모
     
     return msg
 
+def translate_text(chat, text):
+    system = (
+"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n        
+You are a helpful assistant that translates {input_language} to {output_language} in <article> tags. Put it in <result> tags.<|eot_id|>"""
+    )
+    human = """<|start_header_id|>user<|end_header_id|>\n\n<article>{text}</article><|eot_id|><|start_header_id|>assistant<|end_header_id|>"""
+    
+    prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
+    print('prompt: ', prompt)
+    
+    if isKorean(text)==False :
+        input_language = "English"
+        output_language = "Korean"
+    else:
+        input_language = "Korean"
+        output_language = "English"
+                        
+    chain = prompt | chat    
+    try: 
+        result = chain.invoke(
+            {
+                "input_language": input_language,
+                "output_language": output_language,
+                "text": text,
+            }
+        )
+        msg = result.content
+        print('translated text: ', msg)
+    except Exception:
+        err_msg = traceback.format_exc()
+        print('error message: ', err_msg)                    
+        raise Exception ("Not able to request to LLM")
+
+    return msg[msg.find('<result>')+8:len(msg)-9] # remove <result> tag
+
+def check_grammer(chat, text):
+    if isKorean(text)==True:
+        system = (
+"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n
+다음의 <article> tag안의 문장의 오류를 찾아서 설명하고, 오류가 수정된 문장을 답변 마지막에 추가하여 주세요.<|eot_id|>"""
+        )
+    else: 
+        system = (
+"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n            
+Here is pieces of article, contained in <article> tags. Find the error in the sentence and explain it, and add the corrected sentence at the end of your answer.<|eot_id|>"""
+        )        
+    human = """<|start_header_id|>user<|end_header_id|>\n\n<article>{text}</article><|eot_id|><|start_header_id|>assistant<|end_header_id|>"""
+    
+    prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
+    print('prompt: ', prompt)
+    
+    chain = prompt | chat    
+    try: 
+        result = chain.invoke(
+            {
+                "text": text
+            }
+        )
+        
+        msg = result.content
+        print('result of grammer correction: ', msg)
+    except Exception:
+        err_msg = traceback.format_exc()
+        print('error message: ', err_msg)                    
+        raise Exception ("Not able to request to LLM")
+    
+    return msg
 
 def isTyping(connectionId, requestId):    
     msg_proceeding = {
@@ -385,277 +450,6 @@ def load_chat_history(userId, allowTime):
             else:
                 memory_chain.chat_memory.add_ai_message(msg)     
 
-def translate_text(chat, text):
-    system = (
-        "You are a helpful assistant that translates {input_language} to {output_language} in <article> tags. Put it in <result> tags."
-    )
-    human = "<article>{text}</article>"
-    
-    prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
-    print('prompt: ', prompt)
-    
-    if isKorean(text)==False :
-        input_language = "English"
-        output_language = "Korean"
-    else:
-        input_language = "Korean"
-        output_language = "English"
-                        
-    chain = prompt | chat    
-    try: 
-        result = chain.invoke(
-            {
-                "input_language": input_language,
-                "output_language": output_language,
-                "text": text,
-            }
-        )
-        msg = result.content
-        print('translated text: ', msg)
-    except Exception:
-        err_msg = traceback.format_exc()
-        print('error message: ', err_msg)                    
-        raise Exception ("Not able to request to LLM")
-
-    return msg[msg.find('<result>')+8:len(msg)-9] # remove <result> tag
-
-def check_grammer(chat, text):
-    if isKorean(text)==True:
-        system = (
-            "다음의 <article> tag안의 문장의 오류를 찾아서 설명하고, 오류가 수정된 문장을 답변 마지막에 추가하여 주세요."
-        )
-    else: 
-        system = (
-            "Here is pieces of article, contained in <article> tags. Find the error in the sentence and explain it, and add the corrected sentence at the end of your answer."
-        )
-        
-    human = "<article>{text}</article>"
-    
-    prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
-    print('prompt: ', prompt)
-    
-    chain = prompt | chat    
-    try: 
-        result = chain.invoke(
-            {
-                "text": text
-            }
-        )
-        
-        msg = result.content
-        print('result of grammer correction: ', msg)
-    except Exception:
-        err_msg = traceback.format_exc()
-        print('error message: ', err_msg)                    
-        raise Exception ("Not able to request to LLM")
-    
-    return msg
-
-def extract_sentiment(chat, text):
-    if isKorean(text)==True:
-        system = (
-            """아래의 <example> review와 Extracted Topic and sentiment 인 <result>가 있습니다.
-            <example>
-            객실은 작지만 깨끗하고 편안합니다. 프론트 데스크는 정말 분주했고 체크인 줄도 길었지만, 직원들은 프로페셔널하고 매우 유쾌하게 각 사람을 응대했습니다. 우리는 다시 거기에 머물것입니다.
-            </example>
-            <result>
-            청소: 긍정적, 
-            서비스: 긍정적
-            </result>
-
-            아래의 <review>에 대해서 위의 <result> 예시처럼 Extracted Topic and sentiment 을 만들어 주세요."""
-        )
-    else: 
-        system = (
-            """Here is <example> review and extracted topics and sentiments as <result>.
-
-            <example>
-            The room was small but clean and comfortable. The front desk was really busy and the check-in line was long, but the staff were professional and very pleasant with each person they helped. We will stay there again.
-            </example>
-
-            <result>
-            Cleanliness: Positive, 
-            Service: Positive
-            </result>"""
-        )
-        
-    human = "<review>{text}</review>"
-    
-    prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
-    print('prompt: ', prompt)
-    
-    chain = prompt | chat    
-    try: 
-        result = chain.invoke(
-            {
-                "text": text
-            }
-        )        
-        msg = result.content                
-        print('result of sentiment extraction: ', msg)
-        
-    except Exception:
-        err_msg = traceback.format_exc()
-        print('error message: ', err_msg)                    
-        raise Exception ("Not able to request to LLM")
-    
-    return msg
-
-def extract_information(chat, text):
-    if isKorean(text)==True:
-        system = (
-            """다음 텍스트에서 이메일 주소를 정확하게 복사하여 한 줄에 하나씩 적어주세요. 입력 텍스트에 정확하게 쓰여있는 이메일 주소만 적어주세요. 텍스트에 이메일 주소가 없다면, "N/A"라고 적어주세요. 또한 결과는 <result> tag를 붙여주세요."""
-        )
-    else: 
-        system = (
-            """Please precisely copy any email addresses from the following text and then write them, one per line.  Only write an email address if it's precisely spelled out in the input text. If there are no email addresses in the text, write "N/A".  Do not say anything else.  Put it in <result> tags."""
-        )
-        
-    human = "<text>{text}</text>"
-    
-    prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
-    print('prompt: ', prompt)
-    
-    chain = prompt | chat    
-    try: 
-        result = chain.invoke(
-            {
-                "text": text
-            }
-        )        
-        output = result.content        
-        msg = output[output.find('<result>')+8:len(output)-9] # remove <result> 
-        
-        print('result of information extraction: ', msg)
-    except Exception:
-        err_msg = traceback.format_exc()
-        print('error message: ', err_msg)                    
-        raise Exception ("Not able to request to LLM")
-    
-    return msg
-
-def remove_pii(chat, text):
-    if isKorean(text)==True:
-        system = (
-            """아래의 <text>에서 개인식별정보(PII)를 모두 제거하여 외부 계약자와 안전하게 공유할 수 있도록 합니다. 이름, 전화번호, 주소, 이메일을 XXX로 대체합니다. 또한 결과는 <result> tag를 붙여주세요."""
-        )
-    else: 
-        system = (
-            """We want to de-identify some text by removing all personally identifiable information from this text so that it can be shared safely with external contractors.
-            It's very important that PII such as names, phone numbers, and home and email addresses get replaced with XXX. Put it in <result> tags."""
-        )
-        
-    human = "<text>{text}</text>"
-    
-    prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
-    print('prompt: ', prompt)
-    
-    chain = prompt | chat    
-    try: 
-        result = chain.invoke(
-            {
-                "text": text
-            }
-        )        
-        output = result.content        
-        msg = output[output.find('<result>')+8:len(output)-9] # remove <result> 
-        
-        print('result of removing PII : ', msg)
-    except Exception:
-        err_msg = traceback.format_exc()
-        print('error message: ', err_msg)                    
-        raise Exception ("Not able to request to LLM")
-    
-    return msg
-
-def do_step_by_step(chat, text):
-    if isKorean(text)==True:
-        system = (
-            """다음은 Human과 Assistant의 친근한 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. 아래 문맥(context)을 참조했음에도 답을 알 수 없다면, 솔직히 모른다고 말합니다. 여기서 Assistant의 이름은 서연입니다.
-
-            Assistant: 단계별로 생각할까요?
-
-            Human: 예, 그렇게하세요."""
-        )
-    else: 
-        system = (
-            """Using the following conversation, answer friendly for the newest question. If you don't know the answer, just say that you don't know, don't try to make up an answer. You will be acting as a thoughtful advisor. 
-            
-            Assistant: Can I think step by step?
-
-            Human: Yes, please do."""
-        )
-        
-    human = "<text>{text}</text>"
-    
-    prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
-    print('prompt: ', prompt)
-    
-    chain = prompt | chat    
-    try: 
-        result = chain.invoke(
-            {
-                "text": text
-            }
-        )        
-        msg = result.content        
-        
-        print('result of sentiment extraction: ', msg)
-    except Exception:
-        err_msg = traceback.format_exc()
-        print('error message: ', err_msg)                    
-        raise Exception ("Not able to request to LLM")
-    
-    return msg
-
-def extract_timestamp(chat, text):
-    system = (
-        """Human: 아래의 <text>는 시간을 포함한 텍스트입니다. 친절한 AI Assistant로서 시간을 추출하여 아래를 참조하여 <example>과 같이 정리해주세요.
-            
-        - 년도를 추출해서 <year>/<year>로 넣을것 
-        - 월을 추출해서 <month>/<month>로 넣을것
-        - 일을 추출해서 <day>/<day>로 넣을것
-        - 시간을 추출해서 24H으로 정리해서 <hour>/<hour>에 넣을것
-        - 분을 추출해서 <minute>/<minute>로 넣을것
-
-        이때의 예제는 아래와 같습니다.
-        <example>
-        2022년 11월 3일 18시 26분
-        </example>
-        <result>
-            <year>2022</year>
-            <month>11</month>
-            <day>03</day>
-            <hour>18</hour>
-            <minute>26</minute>
-        </result>
-
-        결과에 개행문자인 "\n"과 글자 수와 같은 부가정보는 절대 포함하지 마세요."""
-    )    
-        
-    human = "<text>{text}</text>"
-    
-    prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
-    print('prompt: ', prompt)
-    
-    chain = prompt | chat    
-    try: 
-        result = chain.invoke(
-            {
-                "text": text
-            }
-        )        
-        output = result.content        
-        msg = output[output.find('<result>')+8:len(output)-9] # remove <result> 
-        
-        print('result of sentiment extraction: ', msg)
-    except Exception:
-        err_msg = traceback.format_exc()
-        print('error message: ', err_msg)                    
-        raise Exception ("Not able to request to LLM")
-    
-    return msg
-
 def getResponse(connectionId, jsonBody):
     print('jsonBody: ', jsonBody)
     
@@ -727,16 +521,6 @@ def getResponse(connectionId, jsonBody):
                     msg = translate_text(chat, text) 
                 elif convType == "grammar":
                     msg = check_grammer(chat, text)  
-                elif convType == "sentiment":
-                    msg = extract_sentiment(chat, text)
-                elif convType == "extraction": # infomation extraction
-                    msg = extract_information(chat, text)  
-                elif convType == "pii":
-                    msg = remove_pii(chat, text)   
-                elif convType == "step-by-step":
-                    msg = do_step_by_step(chat, text)  
-                elif convType == "timestamp-extraction":
-                    msg = extract_timestamp(chat, text)  
                 else:
                     msg = general_conversation(connectionId, requestId, chat, text)  
                     
