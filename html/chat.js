@@ -130,7 +130,7 @@ function connect(endpoint, type) {
         }
         else {
             response = JSON.parse(event.data)
-            console.log('response: ', response)
+            // console.log('response: ', response)
 
             if(response.status == 'completed') {          
                 feedback.style.display = 'none';

@@ -23,12 +23,11 @@ from langchain.memory import ConversationBufferWindowMemory
 from langchain_aws import ChatBedrock
 from langchain.prompts import PromptTemplate
 
-
 s3 = boto3.client('s3')
 s3_bucket = os.environ.get('s3_bucket') # bucket name
 s3_prefix = os.environ.get('s3_prefix')
 callLogTableName = os.environ.get('callLogTableName')
-bedrock_region = os.environ.get('bedrock_region', 'us-west-2')
+bedrock_region = os.environ.get('bedrock_region', 'us-east-1')
 modelId = os.environ.get('model_id')
 print('model_id[:9]: ', modelId[:9])
 path = os.environ.get('path')
@@ -143,7 +142,7 @@ def get_summary(chat, docs):
     if isKorean(text)==True:
         system = (
 """<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n
-다음의 <article> tag안의 문장을 요약해서 500자 이내로 설명하세오.<|eot_id|>"""
+다음의 <article> tag안의 문장을 요약해서 500자 이내의 한국어로 설명하세오.<|eot_id|>"""
         )
     else: 
         system = (
