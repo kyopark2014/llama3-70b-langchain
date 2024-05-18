@@ -198,6 +198,11 @@ def readStreamMsg(connectionId, requestId, stream):
 
 <img width="854" alt="image" src="https://github.com/kyopark2014/llama3-70b-langchain/assets/52392004/ed26a74b-06c8-4f87-824f-96e0aeda07c6">
 
+다시 뒤로 가기를 선택하여, "3. Grammatical Error Correction"을 선택하면, 아래와 같이 문법 에러의 원인과 수정된 내용을 보여줍니다.
+
+"Gyeongju are the historic cities in our country. It is the capital of the Silla Kingdom and have many cultural heritages. Gyeongju has various tourist attractions. "로 입력후 결과를 확인합니다. 
+
+<img width="858" alt="image" src="https://github.com/kyopark2014/llama3-70b-langchain/assets/52392004/8dca05f1-9ed8-4278-bdb9-7f783e8d4636">
 
 
 
