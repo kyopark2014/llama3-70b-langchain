@@ -35,10 +35,6 @@ chat = ChatBedrock(
 ```
 
 
-### Stream의 처리
-
-LLM의 응답시간은 수초이상이므로 Stream을 사용하여 사용성을 개선합니다. 
-
 
 ### 채팅 이력의 활용
 
@@ -81,3 +77,9 @@ history = memory_chain.load_memory_variables({})["chat_history"]
         <|start_header_id|>user<|end_header_id|>\n\n"{text}"<|eot_id|>
         <|start_header_id|>assistant<|end_header_id|>\n\n"""
 ```
+
+### Stream의 처리
+
+LLM의 응답시간은 수초이상이므로 Stream을 사용하여 사용성을 개선합니다. 
+
+
