@@ -71,7 +71,7 @@ history = memory_chain.load_memory_variables({})["chat_history"]
 
 ## Prompt format
 
-[Meta Llama 3 Instract](https://llama.meta.com/docs/model-cards-and-prompt-formats/meta-llama-3/#special-tokens-used-with-meta-llama-3)에 따라 아래와 같은 prompt format을 가져야 합니다.
+[Meta Llama 3 Instruct](https://llama.meta.com/docs/model-cards-and-prompt-formats/meta-llama-3/#special-tokens-used-with-meta-llama-3)에 따라 아래와 같은 prompt format을 가져야 합니다.
 
 - BOS (beginning of a sentence) token: <|begin_of_text|>
 
