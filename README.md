@@ -8,6 +8,32 @@
 
 여기에서는 LangChain의 [ChatBedrock](https://python.langchain.com/docs/integrations/chat/bedrock/)을 이용해 Llama3 API를 이용합니다. 
 
+```python
+from langchain_aws import ChatBedrock
+
+boto3_bedrock = boto3.client(
+    service_name='bedrock-runtime',
+    region_name=bedrock_region,
+    config=Config(
+        retries = {
+            'max_attempts': 30
+        }            
+    )
+)
+
+parameters = {
+    "max_gen_len": 1024,  
+    "top_p": 0.9, 
+    "temperature": 0.1,
+}    
+chat = ChatBedrock(   
+    model_id=modelId,
+    client=boto3_bedrock, 
+    model_kwargs=parameters,
+)
+```
+
+
 ### Stream의 처리
 
 LLM의 응답시간은 수초이상이므로 Stream을 사용하여 사용성을 개선합니다. 
