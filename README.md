@@ -10,7 +10,7 @@ Llama 70B는 대용량 메모리와 GPU를 필요로 하므로, 한국어 Chatbo
 5) Lambda-chat은 Llama3에 채팅이력(chat history)와 함께 질문을 전달합니다.
 6) Llama3의 응답은 API Gateway를 통해 사용자에게 전달됩니다.
 
-![image](https://github.com/kyopark2014/llama3-70b-langchain/assets/52392004/ed87b5ee-2af6-4ddc-8c63-6fb2837c3735)
+![image](./images/basic-architecture.png)
 
 
 ## 한국어 Chatbot의 구현
