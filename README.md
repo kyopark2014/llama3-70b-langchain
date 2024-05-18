@@ -160,9 +160,6 @@ def readStreamMsg(connectionId, requestId, stream):
     return msg
 ```
 
-### AWS CDK로 인프라 구현하기
-
-[CDK 구현 코드](./cdk-korean-chatbot/README.md)에서는 Typescript로 인프라를 정의하는 방법에 대해 상세히 설명하고 있습니다.
 
 ## 직접 실습 해보기
 
@@ -172,6 +169,9 @@ def readStreamMsg(connectionId, requestId, stream):
 
 - [AWS Account 생성](https://repost.aws/ko/knowledge-center/create-and-activate-aws-account)
 
+### CDK를 이용한 인프라 설치
+
+본 실습에서는 Seoul 리전 (ap-northeast-2)을 사용합니다. [인프라 설치](./deployment.md)에 따라 CDK로 인프라 설치를 진행합니다. [CDK 구현 코드](./cdk-voicebot/README.md)에서는 Typescript로 인프라를 정의하는 방법에 대해 상세히 설명하고 있습니다. 
 
 ## 실행결과
 
