@@ -21,7 +21,7 @@
 
 ```python
 from langchain_aws import ChatBedrock
-bedrock_region = 'us-west-2'
+bedrock_region = 'us-east-1'
 modelId = "meta.llama3-70b-instruct-v1:0"
 boto3_bedrock = boto3.client(
     service_name='bedrock-runtime',
