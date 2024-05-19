@@ -21,6 +21,8 @@ Llama 70B는 대용량 메모리와 GPU를 필요로 하므로, 한국어 Chatbo
 
 ```python
 from langchain_aws import ChatBedrock
+from botocore.config import Config
+
 bedrock_region = 'us-east-1'
 modelId = "meta.llama3-70b-instruct-v1:0"
 boto3_bedrock = boto3.client(
