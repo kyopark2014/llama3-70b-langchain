@@ -95,7 +95,7 @@ def initiate_chat():
         "max_gen_len": 1024,  
         "top_p": 0.9, 
         "temperature": 0.1,
-        "stopSequences":[]
+        "stopSequences": ["<|start_header_id|>", "<|end_header_id|>", "<|eot_id|>", "<|reserved_special_token"]
     }    
     chat = ChatBedrock(   
         model_id=modelId,
