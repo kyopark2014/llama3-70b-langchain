@@ -492,7 +492,7 @@ def run_agent_react(connectionId, requestId, chat, query):
         agent=agent, 
         tools=tools, 
         verbose=True, 
-        handle_parsing_errors=True,
+        #handle_parsing_errors=True,
         max_iterations = 5
     )
     
