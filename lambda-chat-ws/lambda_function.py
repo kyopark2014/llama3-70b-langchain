@@ -475,7 +475,7 @@ Thought:{agent_scratchpad}
 # define tools
 tools = [get_current_time, get_product_list, get_weather_info]        
 
-agentLangMode = 'eng' # eng kor  
+agentLangMode = 'kor' # eng kor  
 def run_agent_react(connectionId, requestId, chat, query):
     prompt_template = get_react_prompt_template(agentLangMode)
     print('prompt_template: ', prompt_template)
