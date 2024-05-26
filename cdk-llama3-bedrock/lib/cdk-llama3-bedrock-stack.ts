@@ -11,6 +11,7 @@ import * as apiGateway from 'aws-cdk-lib/aws-apigateway';
 import * as s3Deploy from "aws-cdk-lib/aws-s3-deployment";
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as apigatewayv2 from 'aws-cdk-lib/aws-apigatewayv2';
+import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 
 const region = process.env.CDK_DEFAULT_REGION;    
 const accountId = process.env.CDK_DEFAULT_ACCOUNT
@@ -384,6 +385,31 @@ export class CdkLlama3BedrockStack extends cdk.Stack {
         statements: [BedrockPolicy],
       }),
     );        
+
+    const weatherApiSecret = new secretsmanager.Secret(this, `weather-api-secret-for-${projectName}`, {
+      description: 'secret for weather api key', // openweathermap
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      secretName: 'openweathermap',
+      generateSecretString: {
+        secretStringTemplate: JSON.stringify({ 
+          api_name: 'weather'
+        }),
+        generateStringKey: 'api_key',
+        excludeCharacters: '/@"',
+      },
+    });
+    weatherApiSecret.grantRead(roleLambdaWebsocket) 
+
+    const langsmithApiSecret = new secretsmanager.Secret(this, `weather-langsmith-secret-for-${projectName}`, {
+      description: 'secret for lamgsmith api key', // openweathermap
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      secretName: 'langsmithapikey',
+      secretObjectValue: {
+        langchain_project: cdk.SecretValue.unsafePlainText('agent-'+projectName),
+        langsmith_api_key: cdk.SecretValue.unsafePlainText(''),
+      },
+    });
+    langsmithApiSecret.grantRead(roleLambdaWebsocket) 
 
     const apiInvokePolicy = new iam.PolicyStatement({ 
       // resources: ['arn:aws:execute-api:*:*:*'],

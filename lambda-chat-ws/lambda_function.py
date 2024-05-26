@@ -8,6 +8,7 @@ import csv
 import sys
 import re
 import traceback
+import requests
 
 from botocore.config import Config
 from io import BytesIO
@@ -23,6 +24,13 @@ from langchain.memory import ConversationBufferWindowMemory
 from langchain_aws import ChatBedrock
 from langchain.prompts import PromptTemplate
 
+from langchain.agents import tool
+from langchain.agents import AgentExecutor, create_react_agent
+from bs4 import BeautifulSoup
+from langchain.prompts import PromptTemplate
+from langchain.agents import AgentExecutor, create_tool_calling_agent
+from pytz import timezone
+
 s3 = boto3.client('s3')
 s3_bucket = os.environ.get('s3_bucket') # bucket name
 s3_prefix = os.environ.get('s3_prefix')
@@ -33,6 +41,39 @@ print('model_id[:9]: ', modelId[:9])
 path = os.environ.get('path')
 doc_prefix = s3_prefix+'/'
    
+# api key to get weather information in agent
+secretsmanager = boto3.client('secretsmanager')
+try:
+    get_weather_api_secret = secretsmanager.get_secret_value(
+        SecretId='openweathermap'
+    )
+    #print('get_weather_api_secret: ', get_weather_api_secret)
+    secret = json.loads(get_weather_api_secret['SecretString'])
+    #print('secret: ', secret)
+    weather_api_key = secret['api_key']
+
+except Exception as e:
+    raise e
+   
+# api key to use LangSmith
+langsmith_api_key = ""
+try:
+    get_langsmith_api_secret = secretsmanager.get_secret_value(
+        SecretId='langsmithapikey'
+    )
+    #print('get_langsmith_api_secret: ', get_langsmith_api_secret)
+    secret = json.loads(get_langsmith_api_secret['SecretString'])
+    #print('secret: ', secret)
+    langsmith_api_key = secret['langsmith_api_key']
+    langchain_project = secret['langchain_project']
+except Exception as e:
+    raise e
+
+if langsmith_api_key:
+    os.environ["LANGCHAIN_API_KEY"] = langsmith_api_key
+    os.environ["LANGCHAIN_TRACING_V2"] = "true"
+    os.environ["LANGCHAIN_PROJECT"] = langchain_project
+       
 # websocket
 connection_url = os.environ.get('connection_url')
 client = boto3.client('apigatewaymanagementapi', endpoint_url=connection_url)
@@ -293,6 +334,278 @@ AI의 이름은 서연이고, Emoji 없이 한국어로 답변하세요. 또한,
     
     return msg
 
+@tool 
+def get_product_list(keyword: str) -> str:
+    """
+    Search product list by keyword and then return product list
+    keyword: search keyword
+    return: product list
+    """
+
+    answer = ""
+    url = f"https://search.kyobobook.co.kr/search?keyword={keyword}&gbCode=TOT&target=total"
+    response = requests.get(url)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.text, "html.parser")
+        prod_info = soup.find_all("a", attrs={"class": "prod_info"})
+        
+        if len(prod_info):
+            answer = "추천 도서는 아래와 같습니다.\n"
+            
+        for prod in prod_info[:5]:
+            # \n문자를 replace합니다.
+            title = prod.text.strip().replace("\n", "")       
+            link = prod.get("href")
+            answer = answer + f"{title}, URL: {link}\n"
+    
+    return answer
+    
+@tool
+def get_current_time(format: str = "%Y-%m-%d %H:%M:%S")->str:
+    """Returns the current date and time in the specified format"""
+    
+    timestr = datetime.datetime.now(timezone('Asia/Seoul')).strftime(format)
+    # print('timestr:', timestr)
+    
+    return timestr
+
+@tool
+def get_weather_info(city: str) -> str:
+    """
+    Search weather information by city name and then return weather statement.
+    city: the english name of city to search
+    return: weather statement
+    """    
+    
+    city = city.replace('\n','')
+    city = city.replace('\'','')
+                
+    if isKorean(city):
+        place = traslation(chat, city, "Korean", "English")
+        print('city (translated): ', place)
+    else:
+        place = city
+        city = traslation(chat, city, "English", "Korean")
+        print('city (translated): ', city)
+        
+    print('place: ', place)
+    
+    apiKey = weather_api_key
+    lang = 'en' 
+    units = 'metric' 
+    api = f"https://api.openweathermap.org/data/2.5/weather?q={place}&APPID={apiKey}&lang={lang}&units={units}"
+    # print('api: ', api)
+    
+    weather_str: str = f"{city}에 대한 날씨 정보가 없습니다."
+            
+    try:
+        result = requests.get(api)
+        result = json.loads(result.text)
+        print('result: ', result)
+    
+        if 'weather' in result:
+            overall = result['weather'][0]['main']
+            current_temp = result['main']['temp']
+            min_temp = result['main']['temp_min']
+            max_temp = result['main']['temp_max']
+            humidity = result['main']['humidity']
+            wind_speed = result['wind']['speed']
+            cloud = result['clouds']['all']
+            
+            weather_str = f"{city}의 현재 날씨의 특징은 {overall}이며, 현재 온도는 {current_temp}도 이고, 최저온도는 {min_temp}도, 최고 온도는 {max_temp}도 입니다. 현재 습도는 {humidity}% 이고, 바람은 초당 {wind_speed} 미터 입니다. 구름은 {cloud}% 입니다."
+            #weather_str = f"Today, the overall of {city} is {overall}, current temperature is {current_temp} degree, min temperature is {min_temp} degree, highest temperature is {max_temp} degree. huminity is {humidity}%, wind status is {wind_speed} meter per second. the amount of cloud is {cloud}%."            
+    except Exception:
+        err_msg = traceback.format_exc()
+        print('error message: ', err_msg)                    
+        # raise Exception ("Not able to request to LLM")    
+    
+    print('weather_str: ', weather_str)                            
+    return weather_str
+
+def get_react_prompt_template(mode: str): # (hwchase17/react) https://smith.langchain.com/hub/hwchase17/react
+    # Get the react prompt template
+    
+    if mode=='eng':
+        return PromptTemplate.from_template("""Answer the following questions as best you can. You have access to the following tools:
+
+{tools}
+
+Use the following format:
+
+Question: the input question you must answer
+Thought: you should always think about what to do
+Action: the action to take, should be one of [{tool_names}]
+Action Input: the input to the action
+Observation: the result of the action
+... (this Thought/Action/Action Input/Observation can repeat N times)
+Thought: I now know the final answer
+Final Answer: the final answer to the original input question
+
+Begin!
+
+Question: {input}
+Thought:{agent_scratchpad}
+""")
+    else: 
+        return PromptTemplate.from_template("""다음은 Human과 Assistant의 친근한 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. Assistant의 이름은 서연이고, 모르는 질문을 받으면 솔직히 모른다고 말합니다.
+
+사용할 수 있는 tools은 아래와 같습니다:
+
+{tools}
+
+Use the following format:
+
+Question: 답변하여야 할 input question 
+Thought: you should always think about what to do. 
+Action: 해야 할 action으로서 [{tool_names}]중 하나를 선택합니다.
+Action Input: action의 input
+Observation: action의 result
+... (Thought/Action/Action Input/Observation을 3번 반복 할 수 있습니다. 반복이 끝날때까지 정답을 찾지 못하면 마지막 result로 답변합니다.)
+... (반복이 끝날때까지 적절한 답변을 얻지 못하면, 마지막 결과를 Final Answer를 전달합니다. )
+Thought: 나는 이제 Final Answer를 알고 있습니다. 
+Final Answer: original input에 대한 Final Answer
+
+When you have a response to say to the Human, or if you do not need to use a tool, you MUST use the format:
+'''
+Thought: Do I need to use a tool? No
+Final Answer: [your response here]
+'''
+
+Begin!
+
+Question: {input}
+Thought:{agent_scratchpad}
+""")
+        
+# define tools
+tools = [get_current_time, get_product_list, get_weather_info]        
+
+agentLangMode = 'kor'
+def run_agent_react(connectionId, requestId, chat, query):
+    prompt_template = get_react_prompt_template(agentLangMode)
+    print('prompt_template: ', prompt_template)
+    
+    #from langchain import hub
+    #prompt_template = hub.pull("hwchase17/react")
+    #print('prompt_template: ', prompt_template)
+    
+     # create agent
+    isTyping(connectionId, requestId)
+    agent = create_react_agent(chat, tools, prompt_template)
+    
+    agent_executor = AgentExecutor(
+        agent=agent, 
+        tools=tools, 
+        verbose=True, 
+        handle_parsing_errors=True,
+        max_iterations = 5
+    )
+    
+    # run agent
+    response = agent_executor.invoke({"input": query})
+    print('response: ', response)
+
+    # streaming    
+    msg = readStreamMsg(connectionId, requestId, response['output'])
+
+    msg = response['output']
+    print('msg: ', msg)
+            
+    return msg
+
+def get_react_chat_prompt_template():
+    # Get the react prompt template
+
+    return PromptTemplate.from_template("""다음은 Human과 Assistant의 친근한 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. Assistant의 이름은 서연이고, 모르는 질문을 받으면 솔직히 모른다고 말합니다.
+
+사용할 수 있는 tools은 아래와 같습니다:
+
+{tools}
+
+Use the following format:
+
+Question: 답변하여야 할 input question 
+Thought: you should always think about what to do. 
+Action: 해야 할 action으로서 [{tool_names}]중 하나를 선택합니다.
+Action Input: action의 input
+Observation: action의 result
+... (Thought/Action/Action Input/Observation을 3번 반복 할 수 있습니다. 반복이 끝날때까지 정답을 찾지 못하면 마지막 result로 답변합니다.)
+... (반복이 끝날때까지 적절한 답변을 얻지 못하면, 마지막 결과를 Final Answer를 전달합니다. )
+Thought: 나는 이제 Final Answer를 알고 있습니다. 
+Final Answer: original input에 대한 Final Answer
+
+When you have a response to say to the Human, or if you do not need to use a tool, you MUST use the format:
+'''
+Thought: Do I need to use a tool? No
+Final Answer: [your response here]
+'''
+
+Begin!
+
+Previous conversation history:
+{chat_history}
+
+New input: {input}
+Thought:{agent_scratchpad}
+""")
+    
+def run_agent_react_chat(connectionId, requestId, chat, query):
+    # get template based on react 
+    prompt_template = get_react_chat_prompt_template()
+    print('prompt_template: ', prompt_template)
+    
+    # create agent
+    isTyping(connectionId, requestId)
+    agent = create_react_agent(chat, tools, prompt_template)
+    
+    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, handle_parsing_errors=True)
+    
+    history = memory_chain.load_memory_variables({})["chat_history"]
+    print('memory_chain: ', history)
+    
+    # run agent
+    response = agent_executor.invoke({
+        "input": query,
+        "chat_history": history
+    })
+    print('response: ', response)
+    
+    # streaming
+    msg = readStreamMsg(connectionId, requestId, response['output'])
+
+    msg = response['output']
+    print('msg: ', msg)
+            
+    return msg
+
+def traslation(chat, text, input_language, output_language):
+    system = (
+        "You are a helpful assistant that translates {input_language} to {output_language} in <article> tags. Put it in <result> tags."
+    )
+    human = "<article>{text}</article>"
+    
+    prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
+    # print('prompt: ', prompt)
+    
+    chain = prompt | chat    
+    try: 
+        result = chain.invoke(
+            {
+                "input_language": input_language,
+                "output_language": output_language,
+                "text": text,
+            }
+        )
+        
+        msg = result.content
+        # print('translated text: ', msg)
+    except Exception:
+        err_msg = traceback.format_exc()
+        print('error message: ', err_msg)                    
+        raise Exception ("Not able to request to LLM")
+
+    return msg[msg.find('<result>')+8:len(msg)-9] # remove <result> tag
+
 def translate_text(chat, text):
     system = (
 """<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n        
@@ -508,6 +821,10 @@ def getResponse(connectionId, jsonBody):
             else:            
                 if convType == "normal":
                     msg = general_conversation(connectionId, requestId, chat, text)    
+                elif convType == 'agent-react':
+                    msg = run_agent_react(connectionId, requestId, chat, text)      
+                elif convType == 'agent-react-chat':         
+                    msg = run_agent_react_chat(connectionId, requestId, chat, text)
                 elif convType == "translation":
                     msg = translate_text(chat, text) 
                 elif convType == "grammar":
