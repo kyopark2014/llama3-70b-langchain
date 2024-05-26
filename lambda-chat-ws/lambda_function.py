@@ -473,10 +473,10 @@ Thought: Do I need to use a tool? No
 Final Answer: [your response here]
 '''
 
-Begin!<|eot_id|>
+Begin!
 
-<|start_header_id|>user<|end_header_id|>\n\nQuestion: {input}<|eot_id|>
-<|start_header_id|>system<|end_header_id|>Thought:{agent_scratchpad}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+Question: {input}
+Thought:{agent_scratchpad}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 """)
         
 # define tools
