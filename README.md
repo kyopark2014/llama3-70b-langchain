@@ -103,7 +103,7 @@ def _convert_one_message_to_text_llama3(message: BaseMessage) -> str:
     return message_text
 ```
 
-#### Llama3 format
+#### Llama3 format (langchain-aws 0.1.6 이하에서 필요)
 
 [Meta Llama 3 Instruct](https://llama.meta.com/docs/model-cards-and-prompt-formats/meta-llama-3/#special-tokens-used-with-meta-llama-3)에 따라 아래와 같은 prompt format을 가져야 합니다.
 
