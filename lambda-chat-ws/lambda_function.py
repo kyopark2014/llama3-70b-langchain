@@ -442,10 +442,10 @@ Observation: the result of the action
 Thought: I now know the final answer
 Final Answer: the final answer to the original input question
 
-Begin!
+Begin!<|eot_id|>
 
 <|start_header_id|>user<|end_header_id|>\n\nQuestion: {input}
-Thought:{agent_scratchpad}<|start_header_id|>assistant<|end_header_id|>
+Thought:{agent_scratchpad}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 """)
     else: 
         return PromptTemplate.from_template("""<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n
@@ -473,7 +473,7 @@ Thought: Do I need to use a tool? No
 Final Answer: [your response here]
 '''
 
-Begin!
+Begin!<|eot_id|>
 
 <|start_header_id|>user<|end_header_id|>\n\nQuestion: {input}
 Thought:{agent_scratchpad}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
