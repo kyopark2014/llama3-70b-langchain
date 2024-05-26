@@ -442,9 +442,9 @@ Observation: the result of the action
 Thought: I now know the final answer
 Final Answer: the final answer to the original input question
 
-Begin!<|eot_id|>
+Begin!
 
-<|start_header_id|>user<|end_header_id|>\n\nQuestion: {input}
+Question: {input}
 Thought:{agent_scratchpad}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 """)
     else: 
