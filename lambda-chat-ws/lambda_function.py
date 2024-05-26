@@ -182,16 +182,14 @@ def get_summary(chat, docs):
     
     if isKorean(text)==True:
         system = (
-"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n
-다음의 <article> tag안의 문장을 요약해서 500자 이내의 한국어로 설명하세오.<|eot_id|>"""
+"""다음의 <article> tag안의 문장을 요약해서 500자 이내의 한국어로 설명하세오."""
         )
     else: 
         system = (
-"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n
-Here is pieces of article, contained in <article> tags. Write a concise summary within 500 characters.<|eot_id|>"""
+"""Here is pieces of article, contained in <article> tags. Write a concise summary within 500 characters."""
         )
     
-    human = """<|start_header_id|>user<|end_header_id|>\n\n<article>{text}</article><|eot_id|><|start_header_id|>assistant<|end_header_id|>"""
+    human = """<article>{text}</article>"""
     
     prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
     print('prompt: ', prompt)
@@ -258,10 +256,8 @@ def isKorean(text):
         return False
 
 def single_conversation(connectionId, requestId, chat, query):
-    prompt_template = """
-<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n
-AI의 이름은 서연입니다. Emoji 없이 가능한 한국어로 답변하세요..
-Question: {text}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n
+    prompt_template = """AI의 이름은 서연입니다. Emoji 없이 가능한 한국어로 답변하세요..
+Question: {text}
 """
     
     prompt = PromptTemplate(
@@ -295,7 +291,7 @@ Question: {text}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n
 def general_conversation(connectionId, requestId, chat, query):
     system = (
 """다음은 Human과 AI의 친근한 대화입니다. AI은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. 
-AI의 이름은 서연이고, Emoji 없이 한국어로 답변하세요. 또한, 한자, 중국어, 일본어는 반드시 한국어로 변환하여 한국어로 답변합니다.<|eot_id|>"""
+AI의 이름은 서연이고, Emoji 없이 한국어로 답변하세요. 또한, 한자, 중국어, 일본어는 반드시 한국어로 변환하여 한국어로 답변합니다."""
     )
     human = """{input}"""
     
@@ -446,8 +442,7 @@ Question: {input}
 Thought:{agent_scratchpad}
 """)
     else: 
-        return PromptTemplate.from_template("""<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n
-다음은 Human과 Assistant의 친근한 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. Assistant의 이름은 서연이고, 모르는 질문을 받으면 솔직히 모른다고 말합니다.
+        return PromptTemplate.from_template("""다음은 Human과 Assistant의 친근한 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. Assistant의 이름은 서연이고, 모르는 질문을 받으면 솔직히 모른다고 말합니다.
 
 사용할 수 있는 tools은 아래와 같습니다:
 
@@ -474,7 +469,7 @@ Final Answer: [your response here]
 Begin!
 
 Question: {input}
-Thought:{agent_scratchpad}<|start_header_id|>assistant<|end_header_id|>
+Thought:{agent_scratchpad}
 """)
         
 # define tools
@@ -580,9 +575,9 @@ def run_agent_react_chat(connectionId, requestId, chat, query):
 
 def traslation(chat, text, input_language, output_language):
     system = (
-        "<|begin_of_text|><|start_header_id|>system<|end_header_id|>You are a helpful assistant that translates {input_language} to {output_language} in <article> tags. Put it in <result> tags.<|eot_id|>"
+        "You are a helpful assistant that translates {input_language} to {output_language} in <article> tags. Put it in <result> tags."
     )
-    human = "<|start_header_id|>user<|end_header_id|>\n\n<article>{text}</article><|eot_id|><|start_header_id|>assistant<|end_header_id|>"
+    human = "<article>{text}</article>"
     
     prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
     # print('prompt: ', prompt)
@@ -608,10 +603,9 @@ def traslation(chat, text, input_language, output_language):
 
 def translate_text(chat, text):
     system = (
-"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n        
-You are a helpful assistant that translates {input_language} to {output_language} in <article> tags. Put it in <result> tags.<|eot_id|>"""
+        """You are a helpful assistant that translates {input_language} to {output_language} in <article> tags. Put it in <result> tags."""
     )
-    human = """<|start_header_id|>user<|end_header_id|>\n\n<article>{text}</article><|eot_id|><|start_header_id|>assistant<|end_header_id|>"""
+    human = """<article>{text}</article>"""
     
     prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
     print('prompt: ', prompt)
@@ -644,15 +638,13 @@ You are a helpful assistant that translates {input_language} to {output_language
 def check_grammer(chat, text):
     if isKorean(text)==True:
         system = (
-"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n
-다음의 <article> tag안의 문장의 오류를 찾아서 설명하고, 오류가 수정된 문장을 답변 마지막에 추가하여 주세요.<|eot_id|>"""
+"""다음의 <article> tag안의 문장의 오류를 찾아서 설명하고, 오류가 수정된 문장을 답변 마지막에 추가하여 주세요."""
         )
     else: 
         system = (
-"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n            
-Here is pieces of article, contained in <article> tags. Find the error in the sentence and explain it, and add the corrected sentence at the end of your answer.<|eot_id|>"""
+"""Here is pieces of article, contained in <article> tags. Find the error in the sentence and explain it, and add the corrected sentence at the end of your answer."""
         )        
-    human = """<|start_header_id|>user<|end_header_id|>\n\n<article>{text}</article><|eot_id|><|start_header_id|>assistant<|end_header_id|>"""
+    human = """<article>{text}</article>"""
     
     prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
     print('prompt: ', prompt)
