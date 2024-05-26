@@ -95,7 +95,7 @@ def initiate_chat():
         "max_gen_len": 1024,  
         "top_p": 0.9, 
         "temperature": 0.1,
-        "stopSequences": ["<|start_header_id|>", "<|end_header_id|>", "<|eot_id|>", "<|reserved_special_token"]
+        # "stopSequences": ["<|start_header_id|>", "<|end_header_id|>", "<|eot_id|>", "<|reserved_special_token"]
     }    
     chat = ChatBedrock(   
         model_id=modelId,
@@ -427,8 +427,7 @@ def get_react_prompt_template(mode: str): # (hwchase17/react) https://smith.lang
     # Get the react prompt template
     
     if mode=='eng':
-        return PromptTemplate.from_template("""<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n
-Answer the following questions as best you can. You have access to the following tools:
+        return PromptTemplate.from_template("""Answer the following questions as best you can. You have access to the following tools:
 
 {tools}
 
