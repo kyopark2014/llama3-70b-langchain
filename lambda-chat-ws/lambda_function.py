@@ -426,7 +426,8 @@ def get_react_prompt_template(mode: str): # (hwchase17/react) https://smith.lang
     # Get the react prompt template
     
     if mode=='eng':
-        return PromptTemplate.from_template("""<|begin_of_text|><|start_header_id|>system<|end_header_id|>\nAnswer the following questions as best you can. You have access to the following tools:
+        return PromptTemplate.from_template("""<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n
+Answer the following questions as best you can. You have access to the following tools:
 
 {tools}
 
@@ -443,11 +444,12 @@ Final Answer: the final answer to the original input question
 
 Begin!
 
-Question: {input}
-Thought:{agent_scratchpad}
+<|start_header_id|>user<|end_header_id|>\n\nQuestion: {input}
+Thought:{agent_scratchpad}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 """)
     else: 
-        return PromptTemplate.from_template("""<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n다음은 Human과 Assistant의 친근한 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. Assistant의 이름은 서연이고, 모르는 질문을 받으면 솔직히 모른다고 말합니다.
+        return PromptTemplate.from_template("""<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n
+다음은 Human과 Assistant의 친근한 대화입니다. Assistant은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. Assistant의 이름은 서연이고, 모르는 질문을 받으면 솔직히 모른다고 말합니다.
 
 사용할 수 있는 tools은 아래와 같습니다:
 
@@ -473,8 +475,8 @@ Final Answer: [your response here]
 
 Begin!
 
-Question: {input}
-Thought:{agent_scratchpad}
+<|start_header_id|>user<|end_header_id|>\n\nQuestion: {input}
+Thought:{agent_scratchpad}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 """)
         
 # define tools
@@ -580,9 +582,9 @@ def run_agent_react_chat(connectionId, requestId, chat, query):
 
 def traslation(chat, text, input_language, output_language):
     system = (
-        "You are a helpful assistant that translates {input_language} to {output_language} in <article> tags. Put it in <result> tags."
+        "<|begin_of_text|><|start_header_id|>system<|end_header_id|>You are a helpful assistant that translates {input_language} to {output_language} in <article> tags. Put it in <result> tags.<|eot_id|>"
     )
-    human = "<article>{text}</article>"
+    human = "<|start_header_id|>user<|end_header_id|>\n\n<article>{text}</article><|eot_id|><|start_header_id|>assistant<|end_header_id|>"
     
     prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
     # print('prompt: ', prompt)
