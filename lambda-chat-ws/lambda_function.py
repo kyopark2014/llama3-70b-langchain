@@ -94,8 +94,7 @@ def initiate_chat():
     parameters = {
         "max_gen_len": 1024,  
         "top_p": 0.9, 
-        "temperature": 0.1,
-        # "stopSequences": ["<|start_header_id|>", "<|end_header_id|>", "<|eot_id|>", "<|reserved_special_token"]
+        "temperature": 0.1
     }    
     chat = ChatBedrock(   
         model_id=modelId,
@@ -295,11 +294,10 @@ Question: {text}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n
 
 def general_conversation(connectionId, requestId, chat, query):
     system = (
-"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n
-다음은 Human과 AI의 친근한 대화입니다. AI은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. 
+"""다음은 Human과 AI의 친근한 대화입니다. AI은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. 
 AI의 이름은 서연이고, Emoji 없이 한국어로 답변하세요. 또한, 한자, 중국어, 일본어는 반드시 한국어로 변환하여 한국어로 답변합니다.<|eot_id|>"""
     )
-    human = """<|start_header_id|>user<|end_header_id|>\n\n{input}<|eot_id|><|start_header_id|>assistant<|end_header_id|>"""
+    human = """{input}"""
     
     prompt = ChatPromptTemplate.from_messages([("system", system), MessagesPlaceholder(variable_name="history"), ("human", human)])
     print('prompt: ', prompt)
