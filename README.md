@@ -71,7 +71,39 @@ history = memory_chain.load_memory_variables({})["chat_history"]
 
 
 
-## Prompt format
+## Prompt format 
+
+아래 내용은 langchain-aws 0.1.6 버전 이후에는 Prompt format을 별도 지정하지 않아도 됩니다.
+
+langchain의 업데이트 내역은 아래와 같습니다.
+
+```python
+def _convert_one_message_to_text_llama3(message: BaseMessage) -> str:
+    if isinstance(message, ChatMessage):
+        message_text = (
+            f"<|start_header_id|>{message.role}"
+            f"<|end_header_id|>{message.content}<|eot_id|>"
+        )
+    elif isinstance(message, HumanMessage):
+        message_text = (
+            f"<|start_header_id|>user" f"<|end_header_id|>{message.content}<|eot_id|>"
+        )
+    elif isinstance(message, AIMessage):
+        message_text = (
+            f"<|start_header_id|>assistant"
+            f"<|end_header_id|>{message.content}<|eot_id|>"
+        )
+    elif isinstance(message, SystemMessage):
+        message_text = (
+            f"<|start_header_id|>system" f"<|end_header_id|>{message.content}<|eot_id|>"
+        )
+    else:
+        raise ValueError(f"Got unknown type {message}")
+
+    return message_text
+```
+
+#### Llama3 format
 
 [Meta Llama 3 Instruct](https://llama.meta.com/docs/model-cards-and-prompt-formats/meta-llama-3/#special-tokens-used-with-meta-llama-3)에 따라 아래와 같은 prompt format을 가져야 합니다.
 
@@ -103,11 +135,10 @@ AI의 이름은 서연이고, Emoji 없이 가능한 한국어로 답변하세�
 ```python
 def general_conversation(connectionId, requestId, chat, query):
     system = (
-"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n
-다음은 Human과 AI의 친근한 대화입니다. AI는 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. 
-AI의 이름은 서연이고, Emoji 없이 가능한 한국어로 답변하세요. 또한, 한자는 한국어로 변환합니다.<|eot_id|>"""
+"""다음은 Human과 AI의 친근한 대화입니다. AI은 상황에 맞는 구체적인 세부 정보를 충분히 제공합니다. 
+AI의 이름은 서연이고, Emoji 없이 한국어로 답변하세요. 또한, 한자, 중국어, 일본어는 반드시 한국어로 변환하여 한국어로 답변합니다."""
     )
-    human = """<|start_header_id|>user<|end_header_id|>\n\n{input}<|eot_id|><|start_header_id|>assistant<|end_header_id|>"""
+    human = """{input}"""
     
     prompt = ChatPromptTemplate.from_messages([("system", system), MessagesPlaceholder(variable_name="history"), ("human", human)])
     print('prompt: ', prompt)
@@ -127,7 +158,6 @@ AI의 이름은 서연이고, Emoji 없이 가능한 한국어로 답변하세�
         )
         msg = readStreamMsg(connectionId, requestId, stream.content)
         
-        print('stream: ', stream)        
         usage = stream.response_metadata['usage']
         print('prompt_tokens: ', usage['prompt_tokens'])
         print('completion_tokens: ', usage['completion_tokens'])
