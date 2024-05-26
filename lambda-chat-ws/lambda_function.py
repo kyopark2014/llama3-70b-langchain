@@ -445,7 +445,7 @@ Final Answer: the final answer to the original input question
 Begin!
 
 <|start_header_id|>user<|end_header_id|>\n\nQuestion: {input}
-Thought:{agent_scratchpad}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+Thought:{agent_scratchpad}<|start_header_id|>assistant<|end_header_id|>
 """)
     else: 
         return PromptTemplate.from_template("""<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n
@@ -482,7 +482,7 @@ Thought:{agent_scratchpad}<|eot_id|><|start_header_id|>assistant<|end_header_id|
 # define tools
 tools = [get_current_time, get_product_list, get_weather_info]        
 
-agentLangMode = 'kor'
+agentLangMode = 'kor' # eng kor
 def run_agent_react(connectionId, requestId, chat, query):
     prompt_template = get_react_prompt_template(agentLangMode)
     print('prompt_template: ', prompt_template)
