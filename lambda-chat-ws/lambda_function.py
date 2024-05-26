@@ -480,7 +480,8 @@ Thought:{agent_scratchpad}<|eot_id|><|start_header_id|>assistant<|end_header_id|
 """)
         
 # define tools
-tools = [get_current_time, get_product_list, get_weather_info]        
+#tools = [get_current_time, get_product_list, get_weather_info]        
+tools = []
 
 agentLangMode = 'kor' # eng kor  
 def run_agent_react(connectionId, requestId, chat, query):
